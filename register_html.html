@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - MedSystem</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-screen">
+            <div class="logo">📋 Cadastro</div>
+            <p class="subtitle">Novo Usuário do Sistema</p>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="fullName">Nome Completo</label>
+                    <input type="text" id="fullName" placeholder="Digite seu nome completo" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="seu@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="crm">CRM</label>
+                    <input type="text" id="crm" placeholder="12345-SP" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="specialty">Especialidade</label>
+                    <select id="specialty" required>
+                        <option value="">Selecione sua especialidade...</option>
+                        <option value="cardiologia">Cardiologia</option>
+                        <option value="pediatria">Pediatria</option>
+                        <option value="ortopedia">Ortopedia</option>
+                        <option value="neurologia">Neurologia</option>
+                        <option value="ginecologia">Ginecologia</option>
+                        <option value="dermatologia">Dermatologia</option>
+                        <option value="psiquiatria">Psiquiatria</option>
+                        <option value="oftalmologia">Oftalmologia</option>
+                        <option value="urologia">Urologia</option>
+                        <option value="endocrinologia">Endocrinologia</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Telefone</label>
+                    <input type="tel" id="phone" placeholder="(11) 99999-9999" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newPassword">Senha</label>
+                    <input type="password" id="newPassword" placeholder="Mínimo 6 caracteres" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Senha</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirme sua senha" required>
+                </div>
+                
+                <button type="submit" class="btn">Cadastrar</button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">Voltar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

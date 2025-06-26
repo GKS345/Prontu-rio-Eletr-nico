@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pacientes - MedSystem</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">🏥 MedSystem</div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html">📊 Visão Geral</a></li>
+                <li><a href="patients.html" class="active">👥 Pacientes</a></li>
+                <li><a href="new-patient.html">➕ Novo Paciente</a></li>
+                <li><a href="appointments.html">📅 Consultas</a></li>
+                <li><a href="exams.html">🔬 Exames</a></li>
+                <li><a href="prescriptions.html">💊 Receitas</a></li>
+                <li><a href="reports.html">📋 Relatórios</a></li>
+                <li><a href="index.html">🚪 Sair</a></li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="header">
+                <h1 class="page-title">Pacientes</h1>
+                <div class="user-info">
+                    <div class="user-avatar">DR</div>
+                    <span>Dr. João Silva</span>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <!-- SEARCH BAR -->
+                <div style="margin-bottom: 30px; display: flex; gap: 15px; align-items: center;">
+                    <input type="text" placeholder="🔍 Buscar paciente por nome, CPF ou telefone..." style="flex: 1; max-width: 400px;">
+                    <button class="btn-small btn-primary">Buscar</button>
+                    <button class="btn-small btn-success" onclick="window.location.href='new-patient.html'">➕ Novo Paciente</button>
+                </div>
+
+                <!-- PATIENTS LIST -->
+                <div class="patient-card">
+                    <div class="patient-name">Maria Santos Silva</div>
+                    <div class="patient-info">
+                        📞 (11) 99999-9999 • 📧 maria@email.com<br>
+                        🎂 45 anos • 🆔 CPF: 123.456.789-00<br>
+                        📍 Rua das Flores, 123 - São Paulo, SP<br>
+                        🩺 Última consulta: 20/06/2025
+                    </div>
+                    <div class="patient-actions">
+                        <button class="btn-small btn-primary" onclick="window.location.href='patient-history.html?patient=maria'">Ver Histórico</button>
+                        <button class="btn-small btn-success">Nova Consulta</button>
+                        <button class="btn-small btn-warning">Editar</button>
+                        <button class="btn-small btn-primary">Receita</button>
+                    </div>
+                </div>
+
+                <div class="patient-card">
+                    <div class="patient-name">José Oliveira Costa</div>
+                    <div class="patient-info">
+                        📞 (11) 88888-8888 • 📧 jose@email.com<br>
+                        🎂 62 anos • 🆔 CPF: 987.654.321-00<br>
+                        📍 Av. Paulista, 456 - São Paulo, SP<br>
+                        🩺 Última consulta: 15/06/2025
+                    </div>
+                    <div class="patient-actions">
+                        <button class="btn-small btn-primary" onclick="window.location.href='patient-history.html?patient=jose'">Ver Histórico</button>
+                        <button class="btn-small btn-success">Nova Consulta</button>
+                        <button class="btn-small btn-warning">Editar</button>
+                        <button class="btn-small btn-primary">Receita</button>
+                    </div>
+                </div>
+
+                <div class="patient-card">
+                    <div class="patient-name">Ana Costa Pereira</div>
+                    <div class="patient-info">
+                        📞 (11) 77777-7777 • 📧 ana@email.com<br>
+                        🎂 28 anos • 🆔 CPF: 456.789.123-00<br>
+                        📍 Rua da Consolação, 789 - São Paulo, SP<br>
+                        🩺 Última consulta: 10/06/2025
+                    </div>
+                    <div class="patient-actions">
+                        <button class="btn-small btn-primary" onclick="window.location.href='patient-history.html?patient=ana'">Ver Histórico</button>
+                        <button class="btn-small btn-success">Nova Consulta</button>
+                        <button class="btn-small btn-warning">Editar</button>
+                        <button class="btn-small btn-primary">Receita</button>
+                    </div>
+                </div>
+
+                <div class="patient-card">
+                    <div class="patient-name">Roberto Ferreira Lima</div>
+                    <div class="patient-info">
+                        📞 (11) 66666-6666 • 📧 roberto@email.com<br>
+                        🎂 52 anos • 🆔 CPF: 321.654.987-00<br>
+                        📍 Rua Augusta, 321 - São Paulo, SP<br>
+                        🩺 Última consulta: 05/06/2025
+                    </div>
+                    <div class="patient-actions">
+                        <button class="btn-small btn-primary" onclick="window.location.href='patient-history.html?patient=roberto'">Ver Histórico</button>
+                        <button class="btn-small btn-success">Nova Consulta</button>
+                        <button class="btn-small btn-warning">Editar</button>
+                        <button class="btn-small btn-primary">Receita</button>
+                    </div>
+                </div>
+
+                <div class="patient-card">
+                    <div class="patient-name">Carla Mendes Souza</div>
+                    <div class="patient-info">
+                        📞 (11) 55555-5555 • 📧 carla@email.com<br>
+                        🎂 38 anos • 🆔 CPF: 159.753.486-00<br>
+                        📍 Rua Oscar Freire, 654 - São Paulo, SP<br>
+                        🩺 Última consulta: 01/06/2025
+                    </div>
+                    <div class="patient-actions">
+                        <button class="btn-small btn-primary" onclick="window.location.href
