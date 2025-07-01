@@ -1,4 +1,3 @@
-
 // Sistema de Login - MedSystem
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -24,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         'enfermeiro': {
             password: 'enf123',
-            name: 'Carlos Enfermeiro',
+            name: 'Carlos Enfermeiro',  
             role: 'enfermeiro',
             coren: 'COREN11111'
         },
@@ -35,6 +34,36 @@ document.addEventListener('DOMContentLoaded', function () {
             id: 'REC001'
         }
     };
+
+    // Função para carregar usuários cadastrados dinamicamente
+    function loadRegisteredUsers() {
+        const registeredUsers = JSON.parse(sessionStorage.getItem('medSystemUsers') || '[]');
+        const dynamicUsers = {};
+        
+        registeredUsers.forEach(user => {
+            // Criar username baseado no email (parte antes do @)
+            const username = user.email.split('@')[0].toLowerCase();
+            
+            dynamicUsers[username] = {
+                password: user.password,
+                name: user.fullName,
+                role: 'medico', // Usuários cadastrados são médicos por padrão
+                crm: user.crm,
+                email: user.email,
+                specialty: user.specialty,
+                phone: user.phone,
+                isRegistered: true // Flag para identificar usuários cadastrados
+            };
+        });
+        
+        return dynamicUsers;
+    }
+
+    // Função para obter todos os usuários (pré-definidos + cadastrados)
+    function getAllUsers() {
+        const registeredUsers = loadRegisteredUsers();
+        return { ...validUsers, ...registeredUsers };
+    }
 
     // Elementos do DOM
     const loginForm = document.getElementById('loginForm');
@@ -95,8 +124,12 @@ document.addEventListener('DOMContentLoaded', function () {
             name: userData.name,
             role: userData.role,
             crm: userData.crm || userData.coren || userData.id,
+            email: userData.email || '',
+            specialty: userData.specialty || '',
+            phone: userData.phone || '',
             loginTime: new Date().toISOString(),
-            isLoggedIn: true
+            isLoggedIn: true,
+            isRegistered: userData.isRegistered || false
         };
 
         // Salva no sessionStorage (temporário)
@@ -108,23 +141,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Função principal de login
     function handleLogin(username, password) {
+        const allUsers = getAllUsers();
+        
         // Verifica se o usuário existe
-        if (!validUsers[username]) {
+        if (!allUsers[username]) {
             showMessage('Usuário não encontrado!');
             return false;
         }
 
         // Verifica a senha
-        if (validUsers[username].password !== password) {
+        if (allUsers[username].password !== password) {
             showMessage('Senha incorreta!');
             return false;
         }
 
         // Login bem-sucedido
-        const userData = validUsers[username];
+        const userData = allUsers[username];
         saveUserSession(username, userData);
 
-        showMessage(`Bem-vindo(a), ${userData.name}!`, 'success');
+        const welcomeMessage = userData.isRegistered ? 
+            `Bem-vindo(a), Dr(a). ${userData.name}!` : 
+            `Bem-vindo(a), ${userData.name}!`;
+        
+        showMessage(welcomeMessage, 'success');
 
         // Redireciona após 1.5 segundos
         setTimeout(() => {
@@ -138,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
     loginForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        const username = usernameField.value.trim();
+        const username = usernameField.value.trim().toLowerCase();
         const password = passwordField.value.trim();
 
         // Validação básica
@@ -163,6 +202,26 @@ document.addEventListener('DOMContentLoaded', function () {
     function addUserHints() {
         const hintsContainer = document.querySelector('.login-hints');
         if (hintsContainer) {
+            const registeredUsers = loadRegisteredUsers();
+            const registeredCount = Object.keys(registeredUsers).length;
+            
+            let registeredUsersHTML = '';
+            if (registeredCount > 0) {
+                registeredUsersHTML = `
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;">
+                        <h6 style="margin-bottom: 5px; color: #27ae60;">📋 Usuários Cadastrados (${registeredCount}):</h6>
+                        <div style="font-size: 0.8em; color: #666;">
+                            ${Object.keys(registeredUsers).map(username => 
+                                `<div><strong>${username}</strong> (${registeredUsers[username].name})</div>`
+                            ).join('')}
+                        </div>
+                        <div style="font-size: 0.75em; color: #999; margin-top: 5px;">
+                            💡 Use o nome antes do @ do seu email como usuário
+                        </div>
+                    </div>
+                `;
+            }
+            
             const hintsHTML = `
                 <div style="margin-top: 15px; font-size: 0.9em; color: #666;">
                     <h5 style="margin-bottom: 8px; color: #333;">👥 Usuários de Demonstração:</h5>
@@ -173,6 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div><strong>enfermeiro</strong> / enf123 (Enfermeiro)</div>
                         <div><strong>recepcionista</strong> / rec123 (Recepcionista)</div>
                     </div>
+                    ${registeredUsersHTML}
                 </div>
             `;
             hintsContainer.innerHTML += hintsHTML;
@@ -222,6 +282,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Adiciona sugestão de username baseado em email
+    usernameField.addEventListener('input', function(e) {
+        const value = e.target.value.toLowerCase();
+        const allUsers = getAllUsers();
+        
+        // Se o usuário digitar algo que parece com email, sugerir o username
+        if (value.includes('@')) {
+            const suggestedUsername = value.split('@')[0];
+            if (allUsers[suggestedUsername]) {
+                showMessage(`💡 Tente usar: ${suggestedUsername}`, 'info');
+                setTimeout(() => {
+                    const msg = document.querySelector('.login-message');
+                    if (msg) msg.remove();
+                }, 3000);
+            }
+        }
+    });
+
     // Inicialização
     if (!checkExistingSession()) {
         addUserHints();
@@ -237,5 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Console info para desenvolvedores
     console.log('MedSystem Login System carregado');
-    console.log('Usuários disponíveis:', Object.keys(validUsers));
+    console.log('Usuários pré-definidos:', Object.keys(validUsers));
+    console.log('Usuários cadastrados:', Object.keys(loadRegisteredUsers()));
+    console.log('Total de usuários:', Object.keys(getAllUsers()).length);
 });
