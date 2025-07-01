@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultas - Sistema Médico</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="dashboard">
         <!-- Sidebar -->
@@ -14,7 +16,7 @@
                 <div class="sidebar-logo">MedSystem</div>
             </div>
             <ul class="sidebar-menu">
-                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="dashboard.html">📊 Visão Geral</a></li>
                 <li><a href="patients.html">👥 Pacientes</a></li>
                 <li><a href="new-patient.html">➕ Novo Paciente</a></li>
                 <li><a href="appointments.html" class="active">📅 Consultas</a></li>
@@ -80,10 +82,11 @@
                 <!-- Appointments List -->
                 <div id="appointmentsList">
                     <!-- Today's Appointments -->
-                    <h3 style="color: #2c3e50; margin-bottom: 20px; border-left: 4px solid #3498db; padding-left: 15px;">
+                    <h3
+                        style="color: #2c3e50; margin-bottom: 20px; border-left: 4px solid #3498db; padding-left: 15px;">
                         📅 Hoje - 30 de Junho, 2025
                     </h3>
-                    
+
                     <div class="patient-card">
                         <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 15px;">
                             <div>
@@ -93,12 +96,14 @@
                                     📋 Consulta de rotina | 🆔 Paciente #001
                                 </div>
                             </div>
-                            <span class="status-badge status-confirmada" style="background: #d4edda; color: #155724;">Confirmada</span>
+                            <span class="status-badge status-confirmada"
+                                style="background: #d4edda; color: #155724;">Confirmada</span>
                         </div>
                         <div class="patient-actions">
                             <button class="btn-small btn-primary" onclick="startAppointment(1)">▶️ Iniciar</button>
                             <button class="btn-small btn-success" onclick="viewPatient(1)">👤 Ver Paciente</button>
-                            <button class="btn-small btn-warning" onclick="rescheduleAppointment(1)">📅 Reagendar</button>
+                            <button class="btn-small btn-warning" onclick="rescheduleAppointment(1)">📅
+                                Reagendar</button>
                             <button class="btn-small btn-danger" onclick="cancelAppointment(1)">❌ Cancelar</button>
                         </div>
                     </div>
@@ -112,7 +117,8 @@
                                     📋 Retorno pós-cirúrgico | 🆔 Paciente #002
                                 </div>
                             </div>
-                            <span class="status-badge status-em_andamento" style="background: #fff3cd; color: #856404;">Em Andamento</span>
+                            <span class="status-badge status-em_andamento"
+                                style="background: #fff3cd; color: #856404;">Em Andamento</span>
                         </div>
                         <div class="patient-actions">
                             <button class="btn-small btn-success" onclick="finishAppointment(2)">✅ Finalizar</button>
@@ -130,18 +136,21 @@
                                     📋 Primeira consulta | 🆔 Paciente #003
                                 </div>
                             </div>
-                            <span class="status-badge status-agendada" style="background: #cce5ff; color: #004085;">Agendada</span>
+                            <span class="status-badge status-agendada"
+                                style="background: #cce5ff; color: #004085;">Agendada</span>
                         </div>
                         <div class="patient-actions">
                             <button class="btn-small btn-primary" onclick="confirmAppointment(3)">✅ Confirmar</button>
                             <button class="btn-small btn-success" onclick="viewPatient(3)">👤 Ver Paciente</button>
-                            <button class="btn-small btn-warning" onclick="rescheduleAppointment(3)">📅 Reagendar</button>
+                            <button class="btn-small btn-warning" onclick="rescheduleAppointment(3)">📅
+                                Reagendar</button>
                             <button class="btn-small btn-danger" onclick="cancelAppointment(3)">❌ Cancelar</button>
                         </div>
                     </div>
 
                     <!-- Tomorrow's Appointments -->
-                    <h3 style="color: #2c3e50; margin: 40px 0 20px 0; border-left: 4px solid #27ae60; padding-left: 15px;">
+                    <h3
+                        style="color: #2c3e50; margin: 40px 0 20px 0; border-left: 4px solid #27ae60; padding-left: 15px;">
                         📅 Amanhã - 1 de Julho, 2025
                     </h3>
 
@@ -154,11 +163,13 @@
                                     📋 Consulta cardiológica | 🆔 Paciente #004
                                 </div>
                             </div>
-                            <span class="status-badge status-confirmada" style="background: #d4edda; color: #155724;">Confirmada</span>
+                            <span class="status-badge status-confirmada"
+                                style="background: #d4edda; color: #155724;">Confirmada</span>
                         </div>
                         <div class="patient-actions">
                             <button class="btn-small btn-success" onclick="viewPatient(4)">👤 Ver Paciente</button>
-                            <button class="btn-small btn-warning" onclick="rescheduleAppointment(4)">📅 Reagendar</button>
+                            <button class="btn-small btn-warning" onclick="rescheduleAppointment(4)">📅
+                                Reagendar</button>
                             <button class="btn-small btn-danger" onclick="cancelAppointment(4)">❌ Cancelar</button>
                         </div>
                     </div>
@@ -172,12 +183,14 @@
                                     📋 Acompanhamento diabetes | 🆔 Paciente #005
                                 </div>
                             </div>
-                            <span class="status-badge status-agendada" style="background: #cce5ff; color: #004085;">Agendada</span>
+                            <span class="status-badge status-agendada"
+                                style="background: #cce5ff; color: #004085;">Agendada</span>
                         </div>
                         <div class="patient-actions">
                             <button class="btn-small btn-primary" onclick="confirmAppointment(5)">✅ Confirmar</button>
                             <button class="btn-small btn-success" onclick="viewPatient(5)">👤 Ver Paciente</button>
-                            <button class="btn-small btn-warning" onclick="rescheduleAppointment(5)">📅 Reagendar</button>
+                            <button class="btn-small btn-warning" onclick="rescheduleAppointment(5)">📅
+                                Reagendar</button>
                         </div>
                     </div>
                 </div>
@@ -186,9 +199,11 @@
                 <div id="calendarView" style="display: none;">
                     <div class="calendar-container">
                         <div class="calendar-header">
-                            <button onclick="previousMonth()" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">‹</button>
+                            <button onclick="previousMonth()"
+                                style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">‹</button>
                             <h2 id="currentMonth">Junho 2025</h2>
-                            <button onclick="nextMonth()" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">›</button>
+                            <button onclick="nextMonth()"
+                                style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;">›</button>
                         </div>
                         <div class="calendar-grid">
                             <div class="calendar-day" style="font-weight: bold; background: #ecf0f1;">Dom</div>
@@ -198,7 +213,7 @@
                             <div class="calendar-day" style="font-weight: bold; background: #ecf0f1;">Qui</div>
                             <div class="calendar-day" style="font-weight: bold; background: #ecf0f1;">Sex</div>
                             <div class="calendar-day" style="font-weight: bold; background: #ecf0f1;">Sáb</div>
-                            
+
                             <!-- Calendar days with appointments -->
                             <div class="calendar-day">29</div>
                             <div class="calendar-day today has-appointment">
@@ -227,10 +242,12 @@
     </div>
 
     <!-- New Appointment Modal -->
-    <div id="newAppointmentModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px;">
+    <div id="newAppointmentModal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px;">
             <h2 style="margin-bottom: 20px; color: #2c3e50;">📅 Nova Consulta</h2>
-            
+
             <form id="newAppointmentForm">
                 <div class="form-group">
                     <label for="patientSelect">Paciente *</label>
@@ -243,19 +260,19 @@
                         <option value="5">Lucia Mendes</option>
                     </select>
                 </div>
-                
+
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="appointmentDate">Data *</label>
                         <input type="date" id="appointmentDate" required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="appointmentTime">Horário *</label>
                         <input type="time" id="appointmentTime" required>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="appointmentType">Tipo de Consulta *</label>
                     <select id="appointmentType" required>
@@ -267,155 +284,22 @@
                         <option value="pos_cirurgico">Pós-cirúrgico</option>
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="appointmentNotes">Observações</label>
                     <textarea id="appointmentNotes" rows="3" placeholder="Observações sobre a consulta..."></textarea>
                 </div>
-                
+
                 <div style="display: flex; gap: 15px; margin-top: 20px;">
-                    <button type="button" class="btn btn-secondary" onclick="closeNewAppointmentModal()">Cancelar</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeNewAppointmentModal()">Cancelar</button>
                     <button type="submit" class="btn">Agendar Consulta</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script>
-        let currentView = 'list';
-        
-        // Filter functions
-        document.getElementById('filterDate').addEventListener('change', filterAppointments);
-        document.getElementById('filterStatus').addEventListener('change', filterAppointments);
-        
-        function filterAppointments() {
-            const selectedDate = document.getElementById('filterDate').value;
-            const selectedStatus = document.getElementById('filterStatus').value;
-            
-            // Implement filtering logic here
-            console.log('Filtering by date:', selectedDate, 'and status:', selectedStatus);
-        }
-        
-        // View switching
-        function showCalendarView() {
-            if (currentView === 'list') {
-                document.getElementById('appointmentsList').style.display = 'none';
-                document.getElementById('calendarView').style.display = 'block';
-                currentView = 'calendar';
-                document.querySelector('button[onclick="showCalendarView()"]').innerHTML = '📋 Visualizar Lista';
-            } else {
-                document.getElementById('appointmentsList').style.display = 'block';
-                document.getElementById('calendarView').style.display = 'none';
-                currentView = 'list';
-                document.querySelector('button[onclick="showCalendarView()"]').innerHTML = '📅 Visualizar Calendário';
-            }
-        }
-        
-        // Appointment actions
-        function startAppointment(id) {
-            if (confirm('Iniciar consulta do paciente?')) {
-                alert('Consulta iniciada! Timer ativado.');
-                // Update status to "em_andamento"
-            }
-        }
-        
-        function finishAppointment(id) {
-            if (confirm('Finalizar consulta?')) {
-                alert('Consulta finalizada com sucesso!');
-                // Update status to "concluida"
-            }
-        }
-        
-        function confirmAppointment(id) {
-            if (confirm('Confirmar esta consulta?')) {
-                alert('Consulta confirmada!');
-                // Update status to "confirmada"
-            }
-        }
-        
-        function rescheduleAppointment(id) {
-            const newDate = prompt('Nova data (DD/MM/AAAA):');
-            const newTime = prompt('Novo horário (HH:MM):');
-            if (newDate && newTime) {
-                alert(`Consulta reagendada para ${newDate} às ${newTime}`);
-            }
-        }
-        
-        function cancelAppointment(id) {
-            const reason = prompt('Motivo do cancelamento:');
-            if (reason) {
-                alert('Consulta cancelada com sucesso!');
-                // Update status to "cancelada"
-            }
-        }
-        
-        function viewPatient(id) {
-            window.location.href = `patient-details.html?id=${id}`;
-        }
-        
-        function addNotes(id) {
-            const notes = prompt('Adicionar anotações à consulta:');
-            if (notes) {
-                alert('Anotações salvas com sucesso!');
-            }
-        }
-        
-        function requestExam(id) {
-            if (confirm('Solicitar exame para este paciente?')) {
-                window.location.href = `new-exam.html?patient=${id}`;
-            }
-        }
-        
-        // New appointment modal
-        function openNewAppointmentModal() {
-            document.getElementById('newAppointmentModal').style.display = 'block';
-            // Set default date to today
-            document.getElementById('appointmentDate').value = new Date().toISOString().split('T')[0];
-        }
-        
-        function closeNewAppointmentModal() {
-            document.getElementById('newAppointmentModal').style.display = 'none';
-            document.getElementById('newAppointmentForm').reset();
-        }
-        
-        // Form submission
-        document.getElementById('newAppointmentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const patient = document.getElementById('patientSelect').value;
-            const date = document.getElementById('appointmentDate').value;
-            const time = document.getElementById('appointmentTime').value;
-            const type = document.getElementById('appointmentType').value;
-            
-            if (!patient || !date || !time || !type) {
-                alert('Por favor, preencha todos os campos obrigatórios.');
-                return;
-            }
-            
-            alert('Consulta agendada com sucesso!');
-            closeNewAppointmentModal();
-            // Refresh appointments list
-        });
-        
-        // Calendar navigation
-        function previousMonth() {
-            // Implementation for previous month
-            console.log('Previous month');
-        }
-        
-        function nextMonth() {
-            // Implementation for next month
-            console.log('Next month');
-        }
-        
-        // Auto-refresh appointments every 5 minutes
-        setInterval(() => {
-            console.log('Refreshing appointments...');
-            // Implement refresh logic
-        }, 5 * 60 * 1000);
-        
-        // Initialize today's date in filter
-        document.getElementById('filterDate').value = new Date().toISOString().split('T')[0];
-    </script>
+    <script src="../back-end/appointments.js"></script>
 </body>
+
 </html>
