@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pacientes - MedSystem</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="dashboard">
         <!-- SIDEBAR -->
@@ -13,7 +15,7 @@
             <div class="sidebar-header">
                 <div class="sidebar-logo">🏥 MedSystem</div>
             </div>
-            
+
             <ul class="sidebar-menu">
                 <li><a href="dashboard.html">📊 Visão Geral</a></li>
                 <li><a href="patients.html" class="active">👥 Pacientes</a></li>
@@ -39,9 +41,11 @@
             <div class="content-area">
                 <!-- SEARCH BAR -->
                 <div style="margin-bottom: 30px; display: flex; gap: 15px; align-items: center;">
-                    <input type="text" placeholder="🔍 Buscar paciente por nome, CPF ou telefone..." style="flex: 1; max-width: 400px;">
+                    <input type="text" placeholder="🔍 Buscar paciente por nome, CPF ou telefone..."
+                        style="flex: 1; max-width: 400px;">
                     <button class="btn-small btn-primary">Buscar</button>
-                    <button class="btn-small btn-success" onclick="window.location.href='new-patient.html'">➕ Novo Paciente</button>
+                    <button class="btn-small btn-success" onclick="window.location.href='new-patient.html'">➕ Novo
+                        Paciente</button>
                 </div>
 
                 <!-- PATIENTS LIST -->
@@ -54,7 +58,8 @@
                         🩺 Última consulta: 20/06/2025
                     </div>
                     <div class="patient-actions">
-                        <button class="btn-small btn-primary" onclick="window.location.href='patient-history.html?patient=maria'">Ver Histórico</button>
+                        <button class="btn-small btn-primary"
+                            onclick="window.location.href='patient-history.html?patient=maria'">Ver Histórico</button>
                         <button class="btn-small btn-success">Nova Consulta</button>
                         <button class="btn-small btn-warning">Editar</button>
                         <button class="btn-small btn-primary">Receita</button>
@@ -70,7 +75,8 @@
                         🩺 Última consulta: 15/06/2025
                     </div>
                     <div class="patient-actions">
-                        <button class="btn-small btn-primary" onclick="window.location.href='patient-history.html?patient=jose'">Ver Histórico</button>
+                        <button class="btn-small btn-primary"
+                            onclick="window.location.href='patient-history.html?patient=jose'">Ver Histórico</button>
                         <button class="btn-small btn-success">Nova Consulta</button>
                         <button class="btn-small btn-warning">Editar</button>
                         <button class="btn-small btn-primary">Receita</button>
@@ -86,7 +92,8 @@
                         🩺 Última consulta: 10/06/2025
                     </div>
                     <div class="patient-actions">
-                        <button class="btn-small btn-primary" onclick="window.location.href='patient-history.html?patient=ana'">Ver Histórico</button>
+                        <button class="btn-small btn-primary"
+                            onclick="window.location.href='patient-history.html?patient=ana'">Ver Histórico</button>
                         <button class="btn-small btn-success">Nova Consulta</button>
                         <button class="btn-small btn-warning">Editar</button>
                         <button class="btn-small btn-primary">Receita</button>
@@ -102,7 +109,8 @@
                         🩺 Última consulta: 05/06/2025
                     </div>
                     <div class="patient-actions">
-                        <button class="btn-small btn-primary" onclick="window.location.href='patient-history.html?patient=roberto'">Ver Histórico</button>
+                        <button class="btn-small btn-primary"
+                            onclick="window.location.href='patient-history.html?patient=roberto'">Ver Histórico</button>
                         <button class="btn-small btn-success">Nova Consulta</button>
                         <button class="btn-small btn-warning">Editar</button>
                         <button class="btn-small btn-primary">Receita</button>
@@ -117,5 +125,7 @@
                         📍 Rua Oscar Freire, 654 - São Paulo, SP<br>
                         🩺 Última consulta: 01/06/2025
                     </div>
-                    <script></script>
+                    <script src="../back-end/patients.js"></script>
+</body>
+
 </html>

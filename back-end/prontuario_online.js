@@ -3,18 +3,18 @@ function showScreen(screenId) {
     // Esconde todas as telas
     const screens = document.querySelectorAll('.screen');
     screens.forEach(screen => screen.classList.remove('active'));
-    
+
     // Mostra a tela solicitada
     const targetScreen = document.getElementById(screenId);
     if (targetScreen) {
         targetScreen.classList.add('active');
     }
-    
+
     // Se for dashboard, garante que mostra a visão geral
     if (screenId === 'dashboardScreen') {
         setTimeout(() => showDashboardContent('overview'), 100);
     }
-    
+
     // Limpa campos de formulário se saindo do sistema
     if (screenId === 'loginScreen') {
         clearAllForms();
@@ -26,58 +26,58 @@ function showDashboardContent(contentType) {
     // Remove active de todos os links do menu
     const menuLinks = document.querySelectorAll('.sidebar-menu a');
     menuLinks.forEach(link => link.classList.remove('active'));
-    
+
     // Adiciona active ao link correto baseado no contentType
     const activeLink = document.querySelector(`[onclick="showDashboardContent('${contentType}')"]`);
     if (activeLink) {
         activeLink.classList.add('active');
     }
-    
+
     // Esconde todo o conteúdo existente
     const contents = ['overviewContent', 'patientsContent', 'newPatientContent', 'patientHistoryContent'];
     contents.forEach(id => {
         const element = document.getElementById(id);
         if (element) element.style.display = 'none';
     });
-    
+
     // Atualiza título da página e mostra conteúdo correspondente
     const pageTitle = document.getElementById('pageTitle');
     const contentArea = document.getElementById('contentArea');
-    
-    switch(contentType) {
+
+    switch (contentType) {
         case 'overview':
             pageTitle.textContent = 'Visão Geral';
             document.getElementById('overviewContent').style.display = 'block';
             updateDashboardStats();
             break;
-            
+
         case 'patients':
             pageTitle.textContent = 'Pacientes';
             document.getElementById('patientsContent').style.display = 'block';
             break;
-            
+
         case 'newPatient':
             pageTitle.textContent = 'Novo Paciente';
             document.getElementById('newPatientContent').style.display = 'block';
             // Limpa o formulário quando abre
             document.getElementById('patientForm').reset();
             break;
-            
+
         case 'appointments':
             pageTitle.textContent = 'Consultas';
             showAppointmentsContent();
             break;
-            
+
         case 'exams':
             pageTitle.textContent = 'Exames';
             showExamsContent();
             break;
-            
+
         case 'prescriptions':
             pageTitle.textContent = 'Receitas';
             showPrescriptionsContent();
             break;
-            
+
         case 'reports':
             pageTitle.textContent = 'Relatórios';
             showReportsContent();
@@ -322,12 +322,12 @@ function showPatientHistory(patientName) {
             email: 'ana@email.com'
         }
     };
-    
+
     const patient = patientData[patientName] || patientData['Maria Santos Silva'];
-    
+
     document.getElementById('historyPatientName').textContent = patientName;
     document.getElementById('pageTitle').textContent = 'Histórico do Paciente';
-    
+
     // Atualiza dados do paciente
     const patientInfoDiv = document.querySelector('#patientHistoryContent > div:nth-child(2)');
     patientInfoDiv.innerHTML = `
@@ -337,7 +337,7 @@ function showPatientHistory(patientName) {
         <p><strong>Telefone:</strong> ${patient.phone}</p>
         <p><strong>E-mail:</strong> ${patient.email}</p>
     `;
-    
+
     // Esconde conteúdo de pacientes e mostra histórico
     document.getElementById('patientsContent').style.display = 'none';
     document.getElementById('patientHistoryContent').style.display = 'block';
@@ -355,21 +355,21 @@ const validUsers = {
 function initializeAuth() {
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const username = document.getElementById('username').value.trim().toLowerCase();
             const password = document.getElementById('password').value;
-            
+
             // Remove mensagem de erro anterior
             removeLoginMessage();
-            
+
             // Validação básica
             if (!username || !password) {
                 showLoginError('Por favor, preencha todos os campos.');
                 return;
             }
-            
+
             // Verifica credenciais
             if (validUsers[username] && validUsers[username] === password) {
                 // Login bem-sucedido
@@ -395,7 +395,7 @@ function removeLoginMessage() {
 
 function showLoginError(message) {
     removeLoginMessage();
-    
+
     const loginForm = document.getElementById('loginForm');
     const errorDiv = document.createElement('div');
     errorDiv.id = 'loginMessage';
@@ -409,17 +409,17 @@ function showLoginError(message) {
         font-size: 14px;
     `;
     errorDiv.textContent = message;
-    
+
     const firstButton = loginForm.querySelector('.btn');
     loginForm.insertBefore(errorDiv, firstButton);
-    
+
     // Efeito visual nos campos
     const inputs = loginForm.querySelectorAll('input');
     inputs.forEach(input => {
         input.style.borderColor = '#dc3545';
         input.style.animation = 'shake 0.5s ease-in-out';
     });
-    
+
     setTimeout(() => {
         inputs.forEach(input => {
             input.style.borderColor = '#e1e5e9';
@@ -430,7 +430,7 @@ function showLoginError(message) {
 
 function showLoginSuccess() {
     removeLoginMessage();
-    
+
     const loginForm = document.getElementById('loginForm');
     const successDiv = document.createElement('div');
     successDiv.id = 'loginMessage';
@@ -445,7 +445,7 @@ function showLoginSuccess() {
         text-align: center;
     `;
     successDiv.innerHTML = '✅ Login realizado com sucesso! Redirecionando...';
-    
+
     const firstButton = loginForm.querySelector('.btn');
     loginForm.insertBefore(successDiv, firstButton);
 }
@@ -458,20 +458,20 @@ function updateUserInfo(username) {
         'doutor': 'Dr. Santos',
         'demo': 'Usuário Demo'
     };
-    
+
     const userInitials = {
         'admin': 'AD',
         'medico': 'DS',
         'doutor': 'DT',
         'demo': 'UD'
     };
-    
+
     // Atualiza nome no header
     const userInfoSpan = document.querySelector('.user-info span');
     if (userInfoSpan) {
         userInfoSpan.textContent = userNames[username] || username;
     }
-    
+
     // Atualiza avatar
     const userAvatar = document.querySelector('.user-avatar');
     if (userAvatar) {
@@ -484,7 +484,7 @@ function initializeForms() {
     // Cadastro de usuário
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
-        registerForm.addEventListener('submit', function(e) {
+        registerForm.addEventListener('submit', function (e) {
             e.preventDefault();
             showAlert('✅ Usuário cadastrado com sucesso!', 'success');
             setTimeout(() => {
@@ -492,19 +492,19 @@ function initializeForms() {
             }, 1500);
         });
     }
-    
+
     // Cadastro de paciente
     const patientForm = document.getElementById('patientForm');
     if (patientForm) {
-        patientForm.addEventListener('submit', function(e) {
+        patientForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const patientName = document.getElementById('patientName').value;
             if (!patientName.trim()) {
                 showAlert('❌ Por favor, preencha o nome do paciente.', 'error');
                 return;
             }
-            
+
             showAlert('✅ Paciente cadastrado com sucesso!', 'success');
             setTimeout(() => {
                 showDashboardContent('patients');
@@ -520,13 +520,13 @@ function showAlert(message, type = 'info') {
     if (existingAlert) {
         existingAlert.remove();
     }
-    
+
     const colors = {
         success: { bg: '#d4edda', border: '#c3e6cb', text: '#155724' },
         error: { bg: '#f8d7da', border: '#f5c6cb', text: '#721c24' },
         info: { bg: '#e3f2fd', border: '#bbdefb', text: '#1976d2' }
     };
-    
+
     const alertDiv = document.createElement('div');
     alertDiv.id = 'systemAlert';
     alertDiv.style.cssText = `
@@ -544,9 +544,9 @@ function showAlert(message, type = 'info') {
         animation: slideIn 0.3s ease-out;
     `;
     alertDiv.textContent = message;
-    
+
     document.body.appendChild(alertDiv);
-    
+
     // Remove automaticamente após 3 segundos
     setTimeout(() => {
         if (alertDiv.parentNode) {
@@ -564,7 +564,7 @@ function updateDashboardStats() {
         const currentValue = parseInt(stat.textContent);
         const variation = Math.floor(Math.random() * 3) - 1; // -1, 0 ou 1
         const newValue = Math.max(0, currentValue + variation);
-        
+
         if (newValue !== currentValue) {
             stat.style.animation = 'pulse 0.5s ease-in-out';
             setTimeout(() => {
@@ -629,7 +629,7 @@ function printPrescription(id) {
 function generateReport(type) {
     const reportTypes = {
         'monthly': 'Relatório Mensal',
-        'patients': 'Relatório de Pacientes', 
+        'patients': 'Relatório de Pacientes',
         'medications': 'Relatório de Medicamentos'
     };
     showAlert(`📊 Gerando ${reportTypes[type]}...`, 'info');
@@ -639,10 +639,10 @@ function generateReport(type) {
 function clearAllForms() {
     const forms = document.querySelectorAll('form');
     forms.forEach(form => form.reset());
-    
+
     // Remove mensagens de erro/sucesso
     removeLoginMessage();
-    
+
     // Reseta estilos dos inputs
     const inputs = document.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
@@ -655,7 +655,7 @@ function updateDateTime() {
     const now = new Date();
     const dateStr = now.toLocaleDateString('pt-BR');
     const timeStr = now.toLocaleTimeString('pt-BR');
-    
+
     // Atualiza informações em tempo real se necessário
     console.log(`Sistema ativo em ${dateStr} às ${timeStr}`);
 }
@@ -664,14 +664,14 @@ function updateDateTime() {
 function initializeSearch() {
     const searchInput = document.querySelector('input[placeholder*="Buscar paciente"]');
     if (searchInput) {
-        searchInput.addEventListener('input', function(e) {
+        searchInput.addEventListener('input', function (e) {
             const searchTerm = e.target.value.toLowerCase();
             const patientCards = document.querySelectorAll('.patient-card');
-            
+
             patientCards.forEach(card => {
                 const patientName = card.querySelector('.patient-name').textContent.toLowerCase();
                 const patientInfo = card.querySelector('.patient-info').textContent.toLowerCase();
-                
+
                 if (patientName.includes(searchTerm) || patientInfo.includes(searchTerm)) {
                     card.style.display = 'block';
                 } else {
@@ -709,25 +709,25 @@ function addDynamicStyles() {
 function initializeSystem() {
     // Adiciona estilos dinâmicos
     addDynamicStyles();
-    
+
     // Inicializa autenticação
     initializeAuth();
-    
+
     // Inicializa formulários
     initializeForms();
-    
+
     // Inicializa busca
     setTimeout(initializeSearch, 500);
-    
+
     // Atualiza estatísticas a cada 10 segundos
     setInterval(updateDashboardStats, 10000);
-    
+
     // Atualiza data/hora a cada minuto
     setInterval(updateDateTime, 60000);
-    
+
     // Primeira execução
     updateDateTime();
-    
+
     console.log('🏥 MedSystem inicializado com sucesso!');
 }
 

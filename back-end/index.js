@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         'enfermeiro': {
             password: 'enf123',
-            name: 'Carlos Enfermeiro',  
+            name: 'Carlos Enfermeiro',
             role: 'enfermeiro',
             coren: 'COREN11111'
         },
@@ -39,11 +39,11 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadRegisteredUsers() {
         const registeredUsers = JSON.parse(sessionStorage.getItem('medSystemUsers') || '[]');
         const dynamicUsers = {};
-        
+
         registeredUsers.forEach(user => {
             // Criar username baseado no email (parte antes do @)
             const username = user.email.split('@')[0].toLowerCase();
-            
+
             dynamicUsers[username] = {
                 password: user.password,
                 name: user.fullName,
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 isRegistered: true // Flag para identificar usuários cadastrados
             };
         });
-        
+
         return dynamicUsers;
     }
 
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Função principal de login
     function handleLogin(username, password) {
         const allUsers = getAllUsers();
-        
+
         // Verifica se o usuário existe
         if (!allUsers[username]) {
             showMessage('Usuário não encontrado!');
@@ -159,10 +159,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const userData = allUsers[username];
         saveUserSession(username, userData);
 
-        const welcomeMessage = userData.isRegistered ? 
-            `Bem-vindo(a), Dr(a). ${userData.name}!` : 
+        const welcomeMessage = userData.isRegistered ?
+            `Bem-vindo(a), Dr(a). ${userData.name}!` :
             `Bem-vindo(a), ${userData.name}!`;
-        
+
         showMessage(welcomeMessage, 'success');
 
         // Redireciona após 1.5 segundos
@@ -204,16 +204,16 @@ document.addEventListener('DOMContentLoaded', function () {
         if (hintsContainer) {
             const registeredUsers = loadRegisteredUsers();
             const registeredCount = Object.keys(registeredUsers).length;
-            
+
             let registeredUsersHTML = '';
             if (registeredCount > 0) {
                 registeredUsersHTML = `
                     <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;">
                         <h6 style="margin-bottom: 5px; color: #27ae60;">📋 Usuários Cadastrados (${registeredCount}):</h6>
                         <div style="font-size: 0.8em; color: #666;">
-                            ${Object.keys(registeredUsers).map(username => 
-                                `<div><strong>${username}</strong> (${registeredUsers[username].name})</div>`
-                            ).join('')}
+                            ${Object.keys(registeredUsers).map(username =>
+                    `<div><strong>${username}</strong> (${registeredUsers[username].name})</div>`
+                ).join('')}
                         </div>
                         <div style="font-size: 0.75em; color: #999; margin-top: 5px;">
                             💡 Use o nome antes do @ do seu email como usuário
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                 `;
             }
-            
+
             const hintsHTML = `
                 <div style="margin-top: 15px; font-size: 0.9em; color: #666;">
                     <h5 style="margin-bottom: 8px; color: #333;">👥 Usuários de Demonstração:</h5>
@@ -283,10 +283,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Adiciona sugestão de username baseado em email
-    usernameField.addEventListener('input', function(e) {
+    usernameField.addEventListener('input', function (e) {
         const value = e.target.value.toLowerCase();
         const allUsers = getAllUsers();
-        
+
         // Se o usuário digitar algo que parece com email, sugerir o username
         if (value.includes('@')) {
             const suggestedUsername = value.split('@')[0];
