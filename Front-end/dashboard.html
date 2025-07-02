@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - MedSystem</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="dashboard">
         <!-- SIDEBAR -->
@@ -13,7 +15,7 @@
             <div class="sidebar-header">
                 <div class="sidebar-logo">🏥 MedSystem</div>
             </div>
-            
+
             <ul class="sidebar-menu">
                 <li><a href="dashboard.html" class="active">📊 Visão Geral</a></li>
                 <li><a href="patients.html">👥 Pacientes</a></li>
@@ -75,7 +77,7 @@
                             <td>Maria Santos</td>
                             <td>Consulta</td>
                             <td><span class="status-badge status-active">Confirmada</span></td>
-                            <td><button class="btn-small btn-primary">Ver</button></td>
+                            <td><button class="btn-small btn-primary" onclick="redirectToAppointments()">Ver</button></td>
                         </tr>
                         <tr>
                             <td>10:30</td>
@@ -123,5 +125,12 @@
             </div>
         </div>
     </div>
+    <script>
+        //Redireciona para as consultas
+        function redirectToAppointments() {
+            window.location.href = 'appointments.html';
+        }
+    </script>
 </body>
+
 </html>
