@@ -85,17 +85,17 @@ let patients = [
 let nextPrescriptionId = 4;
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     updateStats();
     renderPrescriptions();
     updateHistoryTable();
-    
+
     // Definir data atual no formulário
     const dateInput = document.getElementById('prescriptionDate');
     if (dateInput) {
         dateInput.valueAsDate = new Date();
     }
-    
+
     // Event listener para o formulário
     const form = document.querySelector('#newPrescriptionForm form');
     if (form) {
@@ -111,15 +111,15 @@ function updateStats() {
         const now = new Date();
         return prescDate.getMonth() === now.getMonth() && prescDate.getFullYear() === now.getFullYear();
     }).length;
-    
+
     const today = prescriptions.filter(p => {
         const prescDate = new Date(p.date);
         const now = new Date();
         return prescDate.toDateString() === now.toDateString();
     }).length;
-    
+
     const pending = prescriptions.filter(p => p.status === 'Pendente').length;
-    
+
     // Atualizar DOM
     const statNumbers = document.querySelectorAll('.stat-number');
     if (statNumbers.length >= 4) {
@@ -136,7 +136,7 @@ function showNewPrescriptionForm() {
     if (form) {
         form.style.display = 'block';
         form.scrollIntoView({ behavior: 'smooth' });
-        
+
         // Limpar formulário
         clearForm();
     }
@@ -156,23 +156,23 @@ function clearForm() {
     if (form) {
         form.reset();
         document.getElementById('prescriptionDate').valueAsDate = new Date();
-        
+
         // Resetar lista de medicamentos para apenas um item
         const medicationsList = document.getElementById('medicationsList');
         const firstMedication = medicationsList.querySelector('.medication-item');
         medicationsList.innerHTML = '';
-        
+
         // Clonar o primeiro medicamento limpo
         const cleanMedication = firstMedication.cloneNode(true);
         const inputs = cleanMedication.querySelectorAll('input, textarea');
         inputs.forEach(input => input.value = '');
-        
+
         // Remover botão de remover se existir
         const removeBtn = cleanMedication.querySelector('.btn-danger');
         if (removeBtn) {
             removeBtn.remove();
         }
-        
+
         medicationsList.appendChild(cleanMedication);
     }
 }
@@ -182,21 +182,21 @@ function addMedication() {
     const medicationsList = document.getElementById('medicationsList');
     const firstMedication = medicationsList.querySelector('.medication-item');
     const newMedication = firstMedication.cloneNode(true);
-    
+
     // Limpar os campos do novo medicamento
     const inputs = newMedication.querySelectorAll('input, textarea');
     inputs.forEach(input => input.value = '');
-    
+
     // Adicionar botão de remover
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
     removeBtn.className = 'btn-small btn-danger';
     removeBtn.textContent = '🗑️ Remover';
     removeBtn.style.marginTop = '10px';
-    removeBtn.onclick = function() {
+    removeBtn.onclick = function () {
         newMedication.remove();
     };
-    
+
     newMedication.appendChild(removeBtn);
     medicationsList.appendChild(newMedication);
 }
@@ -204,28 +204,28 @@ function addMedication() {
 // Função para lidar com envio do formulário
 function handleFormSubmit(e) {
     e.preventDefault();
-    
+
     const formData = new FormData(e.target);
     const patientId = document.getElementById('patientSelect').value;
     const date = document.getElementById('prescriptionDate').value;
     const diagnosis = document.getElementById('diagnosis').value;
     const observations = document.getElementById('observations').value;
-    
+
     if (!patientId) {
         alert('Por favor, selecione um paciente.');
         return;
     }
-    
+
     const patient = patients.find(p => p.id === patientId);
-    
+
     // Coletar medicamentos
     const medications = [];
     const medicationItems = document.querySelectorAll('.medication-item');
-    
+
     medicationItems.forEach(item => {
         const inputs = item.querySelectorAll('input');
         const textarea = item.querySelector('textarea');
-        
+
         if (inputs[0].value.trim()) {
             medications.push({
                 name: inputs[0].value,
@@ -236,12 +236,12 @@ function handleFormSubmit(e) {
             });
         }
     });
-    
+
     if (medications.length === 0) {
         alert('Por favor, adicione pelo menos um medicamento.');
         return;
     }
-    
+
     // Criar nova receita
     const newPrescription = {
         id: String(nextPrescriptionId++).padStart(3, '0'),
@@ -252,15 +252,15 @@ function handleFormSubmit(e) {
         observations: observations,
         status: 'Ativa'
     };
-    
+
     prescriptions.unshift(newPrescription);
-    
+
     // Atualizar interface
     updateStats();
     renderPrescriptions();
     updateHistoryTable();
     hideNewPrescriptionForm();
-    
+
     alert('Receita salva com sucesso!');
 }
 
@@ -274,15 +274,15 @@ function renderPrescriptions() {
 function updateHistoryTable() {
     const tbody = document.querySelector('.table tbody');
     if (!tbody) return;
-    
+
     tbody.innerHTML = '';
-    
+
     prescriptions.forEach(prescription => {
         const row = document.createElement('tr');
-        
+
         const medicationNames = prescription.medications.map(m => m.name.split(' ')[0]).join(', ');
         const statusClass = getStatusClass(prescription.status);
-        
+
         row.innerHTML = `
             <td>#${prescription.id}</td>
             <td>${prescription.patient.name}</td>
@@ -291,20 +291,20 @@ function updateHistoryTable() {
             <td><span class="status-badge ${statusClass}">${prescription.status}</span></td>
             <td>
                 <button class="btn-small btn-primary" onclick="viewPrescription('${prescription.id}')">Ver</button>
-                ${prescription.status !== 'Finalizada' ? 
-                    `<button class="btn-small btn-warning" onclick="editPrescription('${prescription.id}')">Editar</button>` :
-                    `<button class="btn-small btn-success" onclick="renewPrescription('${prescription.id}')">Renovar</button>`
-                }
+                ${prescription.status !== 'Finalizada' ?
+                `<button class="btn-small btn-warning" onclick="editPrescription('${prescription.id}')">Editar</button>` :
+                `<button class="btn-small btn-success" onclick="renewPrescription('${prescription.id}')">Renovar</button>`
+            }
             </td>
         `;
-        
+
         tbody.appendChild(row);
     });
 }
 
 // Função para obter classe do status
 function getStatusClass(status) {
-    switch(status) {
+    switch (status) {
         case 'Ativa': return 'status-active';
         case 'Finalizada': return 'status-completed';
         case 'Pendente': return 'status-pending';
@@ -325,11 +325,11 @@ function viewPrescription(id) {
         alert('Receita não encontrada.');
         return;
     }
-    
-    let medicationsText = prescription.medications.map(med => 
+
+    let medicationsText = prescription.medications.map(med =>
         `• ${med.name}\n  Dosagem: ${med.dosage} ${med.frequency}\n  Duração: ${med.duration}\n  ${med.instructions ? 'Instruções: ' + med.instructions : ''}`
     ).join('\n\n');
-    
+
     const details = `
 RECEITA MÉDICA #${prescription.id}
 
@@ -346,7 +346,7 @@ ${medicationsText}
 OBSERVAÇÕES:
 ${prescription.observations}
     `;
-    
+
     alert(details);
 }
 
@@ -357,7 +357,7 @@ function printPrescription(id) {
         alert('Receita não encontrada.');
         return;
     }
-    
+
     // Simulação de impressão
     const printContent = `
         <html>
@@ -407,12 +407,12 @@ function printPrescription(id) {
         </body>
         </html>
     `;
-    
+
     const printWindow = window.open('', '_blank');
     printWindow.document.write(printContent);
     printWindow.document.close();
     printWindow.print();
-    
+
     alert(`Receita #${id} enviada para impressão.`);
 }
 
@@ -423,14 +423,14 @@ function emailPrescription(id) {
         alert('Receita não encontrada.');
         return;
     }
-    
+
     const email = prompt(`Digite o email do paciente ${prescription.patient.name}:`);
     if (email && email.includes('@')) {
         // Simulação de envio por email
         setTimeout(() => {
             alert(`Receita #${id} enviada com sucesso para ${email}`);
         }, 1000);
-        
+
         alert(`Enviando receita #${id} para ${email}...`);
     } else if (email !== null) {
         alert('Email inválido. Por favor, digite um email válido.');
@@ -444,25 +444,25 @@ function editPrescription(id) {
         alert('Receita não encontrada.');
         return;
     }
-    
+
     if (prescription.status === 'Finalizada') {
         alert('Não é possível editar receitas finalizadas.');
         return;
     }
-    
+
     // Preencher formulário com dados da receita
     showNewPrescriptionForm();
-    
+
     setTimeout(() => {
         document.getElementById('patientSelect').value = prescription.patient.id;
         document.getElementById('prescriptionDate').value = prescription.date;
         document.getElementById('diagnosis').value = prescription.diagnosis;
         document.getElementById('observations').value = prescription.observations;
-        
+
         // Limpar medicamentos atuais
         const medicationsList = document.getElementById('medicationsList');
         medicationsList.innerHTML = '';
-        
+
         // Adicionar medicamentos da receita
         prescription.medications.forEach((med, index) => {
             if (index === 0) {
@@ -500,7 +500,7 @@ function editPrescription(id) {
                 const lastMedication = medicationsList.lastElementChild;
                 const inputs = lastMedication.querySelectorAll('input');
                 const textarea = lastMedication.querySelector('textarea');
-                
+
                 inputs[0].value = med.name;
                 inputs[1].value = med.dosage;
                 inputs[2].value = med.frequency;
@@ -508,15 +508,15 @@ function editPrescription(id) {
                 textarea.value = med.instructions;
             }
         });
-        
+
         // Mudar o botão de salvar para atualizar
         const submitBtn = document.querySelector('#newPrescriptionForm .btn[type="submit"]');
         submitBtn.textContent = '✏️ Atualizar Receita';
-        submitBtn.onclick = function(e) {
+        submitBtn.onclick = function (e) {
             e.preventDefault();
             updatePrescription(id);
         };
-        
+
     }, 100);
 }
 
@@ -527,27 +527,27 @@ function updatePrescription(id) {
         alert('Receita não encontrada.');
         return;
     }
-    
+
     const patientId = document.getElementById('patientSelect').value;
     const date = document.getElementById('prescriptionDate').value;
     const diagnosis = document.getElementById('diagnosis').value;
     const observations = document.getElementById('observations').value;
-    
+
     if (!patientId) {
         alert('Por favor, selecione um paciente.');
         return;
     }
-    
+
     const patient = patients.find(p => p.id === patientId);
-    
+
     // Coletar medicamentos
     const medications = [];
     const medicationItems = document.querySelectorAll('.medication-item');
-    
+
     medicationItems.forEach(item => {
         const inputs = item.querySelectorAll('input');
         const textarea = item.querySelector('textarea');
-        
+
         if (inputs[0].value.trim()) {
             medications.push({
                 name: inputs[0].value,
@@ -558,12 +558,12 @@ function updatePrescription(id) {
             });
         }
     });
-    
+
     if (medications.length === 0) {
         alert('Por favor, adicione pelo menos um medicamento.');
         return;
     }
-    
+
     // Atualizar receita
     prescriptions[prescriptionIndex] = {
         ...prescriptions[prescriptionIndex],
@@ -573,18 +573,18 @@ function updatePrescription(id) {
         medications: medications,
         observations: observations
     };
-    
+
     // Restaurar botão original
     const submitBtn = document.querySelector('#newPrescriptionForm .btn[type="submit"]');
     submitBtn.textContent = '💾 Salvar Receita';
     submitBtn.onclick = null;
-    
+
     // Atualizar interface
     updateStats();
     renderPrescriptions();
     updateHistoryTable();
     hideNewPrescriptionForm();
-    
+
     alert('Receita atualizada com sucesso!');
 }
 
@@ -610,7 +610,7 @@ function renewPrescription(id) {
         alert('Receita não encontrada.');
         return;
     }
-    
+
     if (confirm(`Deseja renovar a receita #${id} para ${prescription.patient.name}?`)) {
         // Criar nova receita baseada na anterior
         const newPrescription = {
@@ -619,13 +619,13 @@ function renewPrescription(id) {
             date: new Date().toISOString().split('T')[0],
             status: 'Ativa'
         };
-        
+
         prescriptions.unshift(newPrescription);
-        
+
         updateStats();
         renderPrescriptions();
         updateHistoryTable();
-        
+
         alert(`Receita renovada com sucesso! Nova receita: #${newPrescription.id}`);
     }
 }
@@ -633,19 +633,19 @@ function renewPrescription(id) {
 // Função para imprimir todas as receitas
 function printAllPrescriptions() {
     const activePrescriptions = prescriptions.filter(p => p.status === 'Ativa');
-    
+
     if (activePrescriptions.length === 0) {
         alert('Não há receitas ativas para imprimir.');
         return;
     }
-    
+
     if (confirm(`Imprimir ${activePrescriptions.length} receita(s) ativa(s)?`)) {
         activePrescriptions.forEach(prescription => {
             setTimeout(() => {
                 printPrescription(prescription.id);
             }, 500);
         });
-        
+
         alert(`Enviando ${activePrescriptions.length} receitas para impressão...`);
     }
 }
