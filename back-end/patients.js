@@ -133,7 +133,6 @@ function renderPatients() {
                 🩺 Última consulta: ${patient.lastConsultation}
             </div>
             <div class="patient-actions">
-                <button class="btn-small btn-primary" onclick="viewPatientHistory('${patient.slug}')">Ver Histórico</button>
                 <button class="btn-small btn-success" onclick="newConsultation(${patient.id})">Nova Consulta</button>
                 <button class="btn-small btn-warning" onclick="editPatient(${patient.id})">Editar</button>
                 <button class="btn-small btn-primary" onclick="newPrescription(${patient.id})">Receita</button>
