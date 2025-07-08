@@ -186,16 +186,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Mostra loading
-        const hideLoading = showLoading(e.target.querySelector('button[type="submit"]'));
-
-        // Simula delay de rede (opcional)
-        setTimeout(() => {
-            const loginSuccess = handleLogin(username, password);
-            if (!loginSuccess) {
-                hideLoading();
-            }
-        }, 800);
     });
 
     // Adiciona dicas de usuários válidos
