@@ -312,10 +312,4 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.removeItem('medSystemLastUser');
         window.location.href = 'index.html';
     };
-
-    // Console info para desenvolvedores
-    console.log('MedSystem Login System carregado');
-    console.log('Usuários pré-definidos:', Object.keys(validUsers));
-    console.log('Usuários cadastrados:', Object.keys(loadRegisteredUsers()));
-    console.log('Total de usuários:', Object.keys(getAllUsers()).length);
 });

@@ -758,5 +758,3 @@ try {
 } catch (error) {
     console.log('Auto-save não inicializado - executando no ambiente Claude');
 }
-
-console.log('Script do formulário de novo paciente carregado com sucesso!');

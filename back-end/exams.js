@@ -1058,5 +1058,3 @@ window.closeRequestExamModal = closeRequestExamModal;
 window.openResultModal = openResultModal;
 window.closeResultModal = closeResultModal;
 window.quickActions = quickActions;
-
-console.log('✅ Sistema de exames carregado com sucesso!');

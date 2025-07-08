@@ -1282,7 +1282,7 @@ class ReportManager {
 // Instanciar o gerenciador de relatórios
 const reportManager = new ReportManager();
 
-// Funções globais avançadas
+// Funções globais finais
 window.generateAdvancedReport = function (config) {
     try {
         const report = reportManager.generateAdvancedReport(config);
@@ -1312,6 +1312,3 @@ window.saveAdvancedReport = function (report, name) {
         return null;
     }
 };
-
-// Log de inicialização
-console.log('Funcionalidades avançadas de relatórios carregadas com sucesso!');
