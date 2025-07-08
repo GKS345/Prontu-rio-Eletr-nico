@@ -239,27 +239,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Função para verificar se já está logado
-    function checkExistingSession() {
-        const existingSession = sessionStorage.getItem('medSystemUser');
-        if (existingSession) {
-            try {
-                const userData = JSON.parse(existingSession);
-                if (userData.isLoggedIn) {
-                    showMessage(`Você já está logado como ${userData.name}. Redirecionando...`, 'success');
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 2000);
-                    return true;
-                }
-            } catch (error) {
-                // Remove sessão corrompida
-                sessionStorage.removeItem('medSystemUser');
-            }
-        }
-        return false;
-    }
-
     // Função para pré-preencher o último usuário
     function prefillLastUser() {
         const lastUser = localStorage.getItem('medSystemLastUser');
@@ -301,10 +280,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Inicialização
-    if (!checkExistingSession()) {
-        addUserHints();
-        prefillLastUser();
-    }
+    addUserHints();
+    prefillLastUser();
 
     // Função global para logout (pode ser chamada de outras páginas)
     window.medSystemLogout = function () {
