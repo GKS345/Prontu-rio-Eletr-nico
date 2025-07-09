@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 saveUser(formData);
 
                 // Gerar username para exibir
-                const username = formData.email.split('@')[0].toLowerCase();
+                const username = formData.fullName;
 
                 showMessage(`Cadastro realizado com sucesso! Seu usuário é: ${username}`, 'success');
 

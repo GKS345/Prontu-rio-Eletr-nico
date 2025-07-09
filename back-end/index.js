@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         registeredUsers.forEach(user => {
             // Criar username baseado no email (parte antes do @)
-            const username = user.email.split('@')[0].toLowerCase();
+            const username = user.fullName;
 
             dynamicUsers[username] = {
                 password: user.password,
