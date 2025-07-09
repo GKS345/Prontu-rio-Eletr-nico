@@ -308,8 +308,7 @@ document.addEventListener('DOMContentLoaded', function () {
             infoDiv.innerHTML = `
                 <h5 style="margin: 0 0 10px 0; color: #0c5460;">ℹ️ Como fazer login após o cadastro:</h5>
                 <ul style="margin: 0; padding-left: 20px;">
-                    <li>Seu <strong>usuário</strong> será a parte antes do @ do seu e-mail</li>
-                    <li>Exemplo: se seu e-mail for <code>joao.silva@gmail.com</code>, seu usuário será <code>joao.silva</code></li>
+                    <li>Seu <strong>usuário</strong> será o seu nome completo</li>
                     <li>Use a <strong>mesma senha</strong> que você está cadastrando aqui</li>
                 </ul>
             `;
