@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testes Unitários - Sistema de Relatórios</title>
+    <link rel="stylesheet" href="./css/reportsTest.css">
+</head>
+<body>
+    <nav class="nav-panel">
+        <a href="indexTest.html" class="nav-btn">Login</a>
+        <a href="pacientesTest.html" class="nav-btn">Pacientes</a>
+        <a href="pacienteNovosTest.html" class="nav-btn">Novo Paciente</a>
+        <a href="reportsTest.html" class="nav-btn active">Relatórios</a>
+    </nav>
+    <div class="header-reports">
+        <div class="header-content">
+            <h1>🧪 Testes Unitários<br><span>Sistema de Relatórios MediSystem</span></h1>
+            <p class="subtitle">Valide a robustez dos relatórios do sistema de forma visual e intuitiva.</p>
+        </div>
+    </div>
+    <main>
+        <section class="card-panel">
+            <div class="test-container">
+                <h2>Executar Testes</h2>
+                <div class="btn-group">
+                    <button class="run-tests-btn" onclick="runAllTests()">🚀 Executar Todos os Testes</button>
+                    <button class="run-tests-btn clear-btn" onclick="clearResults()">🗑️ Limpar Resultados</button>
+                </div>
+                <div id="test-summary" class="test-summary" style="display: none;">
+                    <h3>📊 Resumo dos Testes</h3>
+                    <div id="summary-content"></div>
+                </div>
+            </div>
+            <div id="test-results"></div>
+        </section>
+    </main>
+    <footer class="footer-reports">
+        <span>Desenvolvido por <b>MediSystem</b> • 2024</span>
+    </footer>
+    <script>
+        // ========== MOCK DATA E FUNÇÕES AUXILIARES ==========
+        const mockData = {
+            patients: [
+                { id: 1, name: 'Maria Silva', age: 35, lastVisit: '2025-06-28', status: 'active' },
+                { id: 2, name: 'João Santos', age: 42, lastVisit: '2025-06-27', status: 'active' },
+                { id: 3, name: 'Ana Costa', age: 28, lastVisit: '2025-06-26', status: 'completed' }
+            ],
+            appointments: [
+                { id: 1, patient: 'Maria Silva', date: '2025-06-28', time: '09:00', status: 'completed', value: 150 },
+                { id: 2, patient: 'João Santos', date: '2025-06-28', time: '10:30', status: 'completed', value: 200 }
+            ]
+        };
+
+        // Funções auxiliares do sistema original
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            // Força a data como UTC para evitar problemas de fuso horário
+            const date = new Date(dateString + 'T00:00:00Z');
+            // Garante que a data é válida
+            if (isNaN(date.getTime())) return '-';
+            // Formata para dd/mm/yyyy
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const year = date.getUTCFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'active': 'Ativo',
+                'completed': 'Concluído',
+                'pending': 'Pendente',
+                'cancelled': 'Cancelado'
+            };
+            return statusMap[status] || status;
+        }
+
+        function formatDateRange(dateFrom, dateTo) {
+            if (dateFrom && dateTo) {
+                return `${formatDate(dateFrom)} - ${formatDate(dateTo)}`;
+            } else if (dateFrom) {
+                return `A partir de ${formatDate(dateFrom)}`;
+            } else if (dateTo) {
+                return `Até ${formatDate(dateTo)}`;
+            } else {
+                return 'Todos os períodos';
+            }
+        }
+
+        // Classe simples do ReportManager
+        class SimpleReportManager {
+            constructor() {
+                this.reportHistory = [];
+            }
+
+            generateReportId() {
+                return 'RPT_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            }
+
+            validateReportConfig(config) {
+                const requiredFields = ['type', 'dateFrom', 'dateTo'];
+                
+                for (const field of requiredFields) {
+                    if (!config[field]) {
+                        return false;
+                    }
+                }
+
+                const dateFrom = new Date(config.dateFrom);
+                const dateTo = new Date(config.dateTo);
+
+                if (dateFrom > dateTo) {
+                    return false;
+                }
+
+                return true;
+            }
+
+            calculateReportSize(report) {
+                const dataSize = JSON.stringify(report).length;
+                const sizeInKB = Math.ceil(dataSize / 1024);
+
+                if (sizeInKB < 1024) {
+                    return `${sizeInKB} KB`;
+                } else {
+                    return `${(sizeInKB / 1024).toFixed(1)} MB`;
+                }
+            }
+
+            filterPatients(patients, filters) {
+                return patients.filter(patient => {
+                    if (filters.status && patient.status !== filters.status) return false;
+                    return true;
+                });
+            }
+
+            calculateTotalValue(appointments) {
+                return appointments.reduce((sum, apt) => sum + apt.value, 0);
+            }
+        }
+
+        // ========== FRAMEWORK DE TESTES SIMPLES ==========
+        class SimpleTestFramework {
+            constructor() {
+                this.tests = [];
+                this.results = [];
+            }
+
+            // Adicionar teste
+            test(name, testFunction) {
+                this.tests.push({ name, testFunction });
+            }
+
+            // Executar todos os testes
+            runAll() {
+                this.results = [];
+                
+                this.tests.forEach(test => {
+                    try {
+                        test.testFunction();
+                        this.results.push({
+                            name: test.name,
+                            status: 'PASS',
+                            error: null
+                        });
+                    } catch (error) {
+                        this.results.push({
+                            name: test.name,
+                            status: 'FAIL',
+                            error: error.message
+                        });
+                    }
+                });
+
+                return this.results;
+            }
+
+            // Função assert simples
+            assert(condition, message) {
+                if (!condition) {
+                    throw new Error(message || 'Assertion failed');
+                }
+            }
+
+            // Assert equals
+            assertEquals(actual, expected, message) {
+                if (actual !== expected) {
+                    throw new Error(message || `Expected ${expected}, but got ${actual}`);
+                }
+            }
+
+            // Assert array equals
+            assertArrayEquals(actual, expected, message) {
+                if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+                    throw new Error(message || `Arrays are not equal. Expected: ${JSON.stringify(expected)}, Actual: ${JSON.stringify(actual)}`);
+                }
+            }
+
+            // Assert contains
+            assertContains(array, item, message) {
+                if (!array.includes(item)) {
+                    throw new Error(message || `Array does not contain ${item}`);
+                }
+            }
+
+            // Assert not null
+            assertNotNull(value, message) {
+                if (value === null || value === undefined) {
+                    throw new Error(message || 'Value is null or undefined');
+                }
+            }
+
+            // Assert is array
+            assertIsArray(value, message) {
+                if (!Array.isArray(value)) {
+                    throw new Error(message || 'Value is not an array');
+                }
+            }
+
+            // Assert is string
+            assertIsString(value, message) {
+                if (typeof value !== 'string') {
+                    throw new Error(message || 'Value is not a string');
+                }
+            }
+
+            // Assert is number
+            assertIsNumber(value, message) {
+                if (typeof value !== 'number') {
+                    throw new Error(message || 'Value is not a number');
+                }
+            }
+        }
+
+        // ========== INSTÂNCIA DO FRAMEWORK E CONFIGURAÇÃO ==========
+        const testFramework = new SimpleTestFramework();
+        const reportManager = new SimpleReportManager();
+
+        // ========== TESTES UNITÁRIOS ==========
+
+        // Grupo 1: Testes de Formatação
+        testFramework.test('formatDate - deve formatar data corretamente', () => {
+            const result = formatDate('2025-06-28');
+            testFramework.assertEquals(result, '28/06/2025');
+        });
+
+        testFramework.test('formatDate - deve retornar traço para data nula', () => {
+            const result = formatDate(null);
+            testFramework.assertEquals(result, '-');
+        });
+
+        testFramework.test('formatDate - deve retornar traço para data vazia', () => {
+            const result = formatDate('');
+            testFramework.assertEquals(result, '-');
+        });
+
+        testFramework.test('getStatusText - deve retornar texto correto para status ativo', () => {
+            const result = getStatusText('active');
+            testFramework.assertEquals(result, 'Ativo');
+        });
+
+        testFramework.test('getStatusText - deve retornar texto correto para status concluído', () => {
+            const result = getStatusText('completed');
+            testFramework.assertEquals(result, 'Concluído');
+        });
+
+        testFramework.test('getStatusText - deve retornar status original para status desconhecido', () => {
+            const result = getStatusText('unknown');
+            testFramework.assertEquals(result, 'unknown');
+        });
+
+        // Grupo 2: Testes de Intervalo de Datas
+        testFramework.test('formatDateRange - deve formatar intervalo completo', () => {
+            const result = formatDateRange('2025-06-01', '2025-06-30');
+            testFramework.assertEquals(result, '01/06/2025 - 30/06/2025');
+        });
+
+        testFramework.test('formatDateRange - deve formatar apenas data inicial', () => {
+            const result = formatDateRange('2025-06-01', '');
+            testFramework.assertEquals(result, 'A partir de 01/06/2025');
+        });
+
+        testFramework.test('formatDateRange - deve formatar apenas data final', () => {
+            const result = formatDateRange('', '2025-06-30');
+            testFramework.assertEquals(result, 'Até 30/06/2025');
+        });
+
+        testFramework.test('formatDateRange - deve retornar texto padrão para datas vazias', () => {
+            const result = formatDateRange('', '');
+            testFramework.assertEquals(result, 'Todos os períodos');
+        });
+
+        // Grupo 3: Testes do ReportManager
+        testFramework.test('generateReportId - deve gerar ID único', () => {
+            const id1 = reportManager.generateReportId();
+            const id2 = reportManager.generateReportId();
+            
+            testFramework.assertIsString(id1, 'ID deve ser string');
+            testFramework.assertIsString(id2, 'ID deve ser string');
+            testFramework.assert(id1 !== id2, 'IDs devem ser únicos');
+            testFramework.assert(id1.startsWith('RPT_'), 'ID deve começar com RPT_');
+        });
+
+        testFramework.test('validateReportConfig - deve validar configuração válida', () => {
+            const validConfig = {
+                type: 'patients',
+                dateFrom: '2025-06-01',
+                dateTo: '2025-06-30'
+            };
+            
+            const result = reportManager.validateReportConfig(validConfig);
+            testFramework.assertEquals(result, true);
+        });
+
+        testFramework.test('validateReportConfig - deve rejeitar configuração sem tipo', () => {
+            const invalidConfig = {
+                dateFrom: '2025-06-01',
+                dateTo: '2025-06-30'
+            };
+            
+            const result = reportManager.validateReportConfig(invalidConfig);
+            testFramework.assertEquals(result, false);
+        });
+
+        testFramework.test('validateReportConfig - deve rejeitar data inicial maior que final', () => {
+            const invalidConfig = {
+                type: 'patients',
+                dateFrom: '2025-06-30',
+                dateTo: '2025-06-01'
+            };
+            
+            const result = reportManager.validateReportConfig(invalidConfig);
+            testFramework.assertEquals(result, false);
+        });
+
+        testFramework.test('calculateReportSize - deve calcular tamanho em KB', () => {
+            const smallReport = { data: 'test' };
+            const result = reportManager.calculateReportSize(smallReport);
+            
+            testFramework.assertIsString(result, 'Tamanho deve ser string');
+            testFramework.assert(result.includes('KB'), 'Deve conter KB para arquivos pequenos');
+        });
+
+        testFramework.test('calculateReportSize - deve calcular tamanho em MB para arquivos grandes', () => {
+            const largeReport = { data: 'x'.repeat(2000000) }; // String grande
+            const result = reportManager.calculateReportSize(largeReport);
+            
+            testFramework.assertIsString(result, 'Tamanho deve ser string');
+            testFramework.assert(result.includes('MB'), 'Deve conter MB para arquivos grandes');
+        });
+
+        // Grupo 4: Testes de Filtros
+        testFramework.test('filterPatients - deve filtrar por status ativo', () => {
+            const filters = { status: 'active' };
+            const result = reportManager.filterPatients(mockData.patients, filters);
+            
+            testFramework.assertIsArray(result, 'Resultado deve ser array');
+            testFramework.assertEquals(result.length, 2, 'Deve retornar 2 pacientes ativos');
+            testFramework.assert(result.every(p => p.status === 'active'), 'Todos devem ter status ativo');
+        });
+
+        testFramework.test('filterPatients - deve filtrar por status concluído', () => {
+            const filters = { status: 'completed' };
+            const result = reportManager.filterPatients(mockData.patients, filters);
+            
+            testFramework.assertIsArray(result, 'Resultado deve ser array');
+            testFramework.assertEquals(result.length, 1, 'Deve retornar 1 paciente com status concluído');
+            testFramework.assertEquals(result[0].status, 'completed', 'Status deve ser completed');
+        });
+
+        testFramework.test('filterPatients - deve retornar todos quando não há filtros', () => {
+            const filters = {};
+            const result = reportManager.filterPatients(mockData.patients, filters);
+            
+            testFramework.assertIsArray(result, 'Resultado deve ser array');
+            testFramework.assertEquals(result.length, mockData.patients.length, 'Deve retornar todos os pacientes');
+        });
+
+        // Grupo 5: Testes de Cálculos
+        testFramework.test('calculateTotalValue - deve calcular valor total das consultas', () => {
+            const result = reportManager.calculateTotalValue(mockData.appointments);
+            
+            testFramework.assertIsNumber(result, 'Resultado deve ser número');
+            testFramework.assertEquals(result, 350, 'Deve somar 150 + 200 = 350');
+        });
+
+        testFramework.test('calculateTotalValue - deve retornar zero para array vazio', () => {
+            const result = reportManager.calculateTotalValue([]);
+            
+            testFramework.assertIsNumber(result, 'Resultado deve ser número');
+            testFramework.assertEquals(result, 0, 'Deve retornar zero para array vazio');
+        });
+
+        testFramework.test('calculateTotalValue - deve lidar com valores decimais', () => {
+            const appointmentsWithDecimals = [
+                { value: 150.50 },
+                { value: 200.75 }
+            ];
+            const result = reportManager.calculateTotalValue(appointmentsWithDecimals);
+            
+            testFramework.assertIsNumber(result, 'Resultado deve ser número');
+            testFramework.assertEquals(result, 351.25, 'Deve somar corretamente valores decimais');
+        });
+
+        // Grupo 6: Testes de Validação de Dados
+        testFramework.test('mockData.patients - deve ter estrutura correta', () => {
+            testFramework.assertIsArray(mockData.patients, 'Patients deve ser array');
+            testFramework.assert(mockData.patients.length > 0, 'Deve ter pelo menos um paciente');
+            
+            const patient = mockData.patients[0];
+            testFramework.assertNotNull(patient.id, 'Paciente deve ter ID');
+            testFramework.assertIsString(patient.name, 'Nome deve ser string');
+            testFramework.assertIsNumber(patient.age, 'Idade deve ser número');
+            testFramework.assertIsString(patient.status, 'Status deve ser string');
+        });
+
+        testFramework.test('mockData.appointments - deve ter estrutura correta', () => {
+            testFramework.assertIsArray(mockData.appointments, 'Appointments deve ser array');
+            testFramework.assert(mockData.appointments.length > 0, 'Deve ter pelo menos uma consulta');
+            
+            const appointment = mockData.appointments[0];
+            testFramework.assertNotNull(appointment.id, 'Consulta deve ter ID');
+            testFramework.assertIsString(appointment.patient, 'Paciente deve ser string');
+            testFramework.assertIsString(appointment.date, 'Data deve ser string');
+            testFramework.assertIsNumber(appointment.value, 'Valor deve ser número');
+        });
+
+        // ========== FUNÇÕES DE EXECUÇÃO E DISPLAY ==========
+        function runAllTests() {
+            const results = testFramework.runAll();
+            displayResults(results);
+        }
+
+        // Exibição dos resultados mais bonita e agrupada
+        function displayResults(results) {
+            const container = document.getElementById('test-results');
+            container.innerHTML = '';
+
+            // Agrupar testes por categoria
+            const groups = {
+                'Formatação': results.filter(r => r.name.includes('formatDate') || r.name.includes('getStatusText') || r.name.includes('formatDateRange')),
+                'ReportManager': results.filter(r => r.name.includes('generateReportId') || r.name.includes('validateReportConfig') || r.name.includes('calculateReportSize')),
+                'Filtros': results.filter(r => r.name.includes('filterPatients')),
+                'Cálculos': results.filter(r => r.name.includes('calculateTotalValue')),
+                'Validação de Dados': results.filter(r => r.name.includes('mockData'))
+            };
+
+            Object.entries(groups).forEach(([groupName, groupTests]) => {
+                if (groupTests.length > 0) {
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'test-group';
+                    groupDiv.innerHTML = `<h3>${groupName}</h3>`;
+                    
+                    groupTests.forEach(result => {
+                        const testDiv = document.createElement('div');
+                        testDiv.className = `test-result ${result.status === 'PASS' ? 'pass' : 'fail'}`;
+                        testDiv.innerHTML = `
+                            <strong>${result.status === 'PASS' ? '✅' : '❌'} ${result.name}</strong>
+                            ${result.error ? `<br><small>Erro: ${result.error}</small>` : ''}
+                        `;
+                        groupDiv.appendChild(testDiv);
+                    });
+                    
+                    container.appendChild(groupDiv);
+                }
+            });
+
+            // Mostrar resumo
+            showSummary(results);
+        }
+
+        function showSummary(results) {
+            const summaryDiv = document.getElementById('test-summary');
+            const summaryContent = document.getElementById('summary-content');
+            
+            const total = results.length;
+            const passed = results.filter(r => r.status === 'PASS').length;
+            const failed = results.filter(r => r.status === 'FAIL').length;
+            const successRate = ((passed / total) * 100).toFixed(1);
+
+            summaryContent.innerHTML = `
+                <div style="display: flex; justify-content: space-around; font-size: 18px;">
+                    <div><strong>Total:</strong> ${total}</div>
+                    <div style="color:#28a745;"><strong>Passou:</strong> ${passed} ✅</div>
+                    <div style="color:#dc3545;"><strong>Falhou:</strong> ${failed} ❌</div>
+                    <div><strong>Sucesso:</strong> ${successRate}%</div>
+                </div>
+            `;
+            
+            summaryDiv.style.display = 'block';
+        }
+
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = '';
+            document.getElementById('test-summary').style.display = 'none';
+        }
+
+        // ========== INICIALIZAÇÃO ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 Framework de testes carregado!');
+            console.log(`📊 ${testFramework.tests.length} testes registrados`);
+        });
+    </script>
+</body>
+</html>

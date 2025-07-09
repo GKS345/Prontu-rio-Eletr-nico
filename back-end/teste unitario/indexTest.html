@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testes Unitários - MedSystem Login</title>
+    <!-- Corrige o caminho do CSS para garantir o carregamento correto -->
+    <link rel="stylesheet" href="./css/indexTest.css">
+</head>
+<body>
+    <nav class="nav-panel">
+        <a href="indexTest.html" class="nav-btn active">Login</a>
+        <a href="pacientesTest.html" class="nav-btn">Pacientes</a>
+        <a href="pacienteNovosTest.html" class="nav-btn">Novo Paciente</a>
+        <a href="reportsTest.html" class="nav-btn">Relatórios</a>
+    </nav>
+    <div class="header">
+        <h1>🧪 Testes Unitários<br>MedSystem Login</h1>
+    </div>
+    <div class="container">
+        <div id="test-results"></div>
+        <div class="summary" id="summary" style="display: none;"></div>
+        <button class="run-tests-btn" onclick="runAllTests()">Executar Todos os Testes</button>
+    </div>
+    <script>
+        // Simulação das funções do sistema original
+        const validUsers = {
+            'admin': {
+                password: 'admin123',
+                name: 'Administrador',
+                role: 'admin',
+                crm: 'ADMIN001'
+            },
+            'dr.silva': {
+                password: 'medico123',
+                name: 'Dr. João Silva',
+                role: 'medico',
+                crm: 'CRM12345'
+            },
+            'dra.santos': {
+                password: 'medica123',
+                name: 'Dra. Maria Santos',
+                role: 'medico',
+                crm: 'CRM67890'
+            }
+        };
+
+        // Função para carregar usuários cadastrados (simulada)
+        function loadRegisteredUsers() {
+            const registeredUsers = JSON.parse(sessionStorage.getItem('medSystemUsers') || '[]');
+            const dynamicUsers = {};
+
+            registeredUsers.forEach(user => {
+                const username = user.email.split('@')[0].toLowerCase();
+                dynamicUsers[username] = {
+                    password: user.password,
+                    name: user.fullName,
+                    role: 'medico',
+                    crm: user.crm,
+                    email: user.email,
+                    specialty: user.specialty,
+                    phone: user.phone,
+                    isRegistered: true
+                };
+            });
+
+            return dynamicUsers;
+        }
+
+        // Função para obter todos os usuários
+        function getAllUsers() {
+            const registeredUsers = loadRegisteredUsers();
+            return { ...validUsers, ...registeredUsers };
+        }
+
+        // Função de validação de login
+        function validateLogin(username, password) {
+            const allUsers = getAllUsers();
+            
+            if (!allUsers[username]) {
+                return { success: false, message: 'Usuário não encontrado!' };
+            }
+
+            if (allUsers[username].password !== password) {
+                return { success: false, message: 'Senha incorreta!' };
+            }
+
+            return { success: true, message: 'Login válido!', user: allUsers[username] };
+        }
+
+        // Função para salvar sessão
+        function saveUserSession(username, userData) {
+            const sessionData = {
+                username: username,
+                name: userData.name,
+                role: userData.role,
+                crm: userData.crm || userData.coren || userData.id,
+                email: userData.email || '',
+                specialty: userData.specialty || '',
+                phone: userData.phone || '',
+                loginTime: new Date().toISOString(),
+                isLoggedIn: true,
+                isRegistered: userData.isRegistered || false
+            };
+
+            sessionStorage.setItem('medSystemUser', JSON.stringify(sessionData));
+            return sessionData;
+        }
+
+        // Função para verificar sessão existente
+        function checkExistingSession() {
+            const existingSession = sessionStorage.getItem('medSystemUser');
+            if (existingSession) {
+                try {
+                    const userData = JSON.parse(existingSession);
+                    return userData.isLoggedIn ? userData : null;
+                } catch (error) {
+                    sessionStorage.removeItem('medSystemUser');
+                    return null;
+                }
+            }
+            return null;
+        }
+
+        // Sistema de testes simples
+        let testResults = [];
+
+        function assert(condition, message) {
+            if (condition) {
+                testResults.push({ status: 'PASS', message: message });
+                return true;
+            } else {
+                testResults.push({ status: 'FAIL', message: message });
+                return false;
+            }
+        }
+
+        function assertEquals(actual, expected, message) {
+            return assert(actual === expected, `${message} - Esperado: ${expected}, Atual: ${actual}`);
+        }
+
+        function assertNotNull(value, message) {
+            return assert(value !== null && value !== undefined, `${message} - Valor não deve ser null/undefined`);
+        }
+
+        function assertNull(value, message) {
+            return assert(value === null || value === undefined, `${message} - Valor deve ser null/undefined`);
+        }
+
+        // Testes das funções
+        function testLoadRegisteredUsers() {
+            console.log('🧪 Testando loadRegisteredUsers...');
+            
+            // Limpa dados de teste
+            sessionStorage.removeItem('medSystemUsers');
+            
+            // Teste com dados vazios
+            let result = loadRegisteredUsers();
+            assert(Object.keys(result).length === 0, 'Deve retornar objeto vazio quando não há usuários cadastrados');
+            
+            // Teste com dados simulados
+            const testUsers = [{
+                email: 'teste@email.com',
+                password: '123456',
+                fullName: 'Dr. Teste',
+                crm: 'CRM123',
+                specialty: 'Cardiologia',
+                phone: '11999999999'
+            }];
+            
+            sessionStorage.setItem('medSystemUsers', JSON.stringify(testUsers));
+            result = loadRegisteredUsers();
+            
+            assert(Object.keys(result).length === 1, 'Deve retornar 1 usuário cadastrado');
+            assert(result['teste'] !== undefined, 'Deve criar username baseado no email');
+            assert(result['teste'].name === 'Dr. Teste', 'Deve mapear nome corretamente');
+            assert(result['teste'].isRegistered === true, 'Deve marcar como usuário registrado');
+        }
+
+        function testGetAllUsers() {
+            console.log('🧪 Testando getAllUsers...');
+            
+            const allUsers = getAllUsers();
+            
+            assert(Object.keys(allUsers).length >= 3, 'Deve conter pelo menos os usuários pré-definidos');
+            assert(allUsers['admin'] !== undefined, 'Deve conter usuário admin');
+            assert(allUsers['dr.silva'] !== undefined, 'Deve conter usuário dr.silva');
+            assert(allUsers['dra.santos'] !== undefined, 'Deve conter usuário dra.santos');
+        }
+
+        function testValidateLogin() {
+            console.log('🧪 Testando validateLogin...');
+            
+            // Teste login válido
+            let result = validateLogin('admin', 'admin123');
+            assert(result.success === true, 'Login válido deve retornar success = true');
+            assert(result.user.name === 'Administrador', 'Deve retornar dados do usuário');
+            
+            // Teste usuário inexistente
+            result = validateLogin('inexistente', 'senha');
+            assert(result.success === false, 'Usuário inexistente deve retornar success = false');
+            assert(result.message === 'Usuário não encontrado!', 'Deve retornar mensagem de usuário não encontrado');
+            
+            // Teste senha incorreta
+            result = validateLogin('admin', 'senhaerrada');
+            assert(result.success === false, 'Senha incorreta deve retornar success = false');
+            assert(result.message === 'Senha incorreta!', 'Deve retornar mensagem de senha incorreta');
+        }
+
+        function testSaveUserSession() {
+            console.log('🧪 Testando saveUserSession...');
+            
+            // Limpa sessão anterior
+            sessionStorage.removeItem('medSystemUser');
+            
+            const userData = {
+                name: 'Teste User',
+                role: 'medico',
+                crm: 'CRM123',
+                email: 'teste@email.com'
+            };
+            
+            const sessionData = saveUserSession('teste', userData);
+            
+            assert(sessionData.username === 'teste', 'Deve salvar username corretamente');
+            assert(sessionData.name === 'Teste User', 'Deve salvar nome corretamente');
+            assert(sessionData.isLoggedIn === true, 'Deve marcar como logado');
+            assertNotNull(sessionData.loginTime, 'Deve salvar horário de login');
+            
+            // Verifica se foi salvo no sessionStorage
+            const savedSession = sessionStorage.getItem('medSystemUser');
+            assertNotNull(savedSession, 'Deve salvar sessão no sessionStorage');
+        }
+
+        function testCheckExistingSession() {
+            console.log('🧪 Testando checkExistingSession...');
+            
+            // Teste sem sessão
+            sessionStorage.removeItem('medSystemUser');
+            let result = checkExistingSession();
+            assertNull(result, 'Deve retornar null quando não há sessão');
+            
+            // Teste com sessão válida
+            const sessionData = {
+                username: 'teste',
+                name: 'Teste User',
+                isLoggedIn: true,
+                loginTime: new Date().toISOString()
+            };
+            sessionStorage.setItem('medSystemUser', JSON.stringify(sessionData));
+            
+            result = checkExistingSession();
+            assertNotNull(result, 'Deve retornar dados da sessão quando existe');
+            assert(result.username === 'teste', 'Deve retornar username correto');
+            assert(result.isLoggedIn === true, 'Deve confirmar que está logado');
+            
+            // Teste com sessão inválida (usuário não logado)
+            sessionData.isLoggedIn = false;
+            sessionStorage.setItem('medSystemUser', JSON.stringify(sessionData));
+            result = checkExistingSession();
+            assertNull(result, 'Deve retornar null quando usuário não está logado');
+        }
+
+        function testUsernameSuggestion() {
+            console.log('🧪 Testando sugestão de username...');
+            
+            // Simula a lógica de sugestão de username
+            function suggestUsername(email) {
+                if (email.includes('@')) {
+                    return email.split('@')[0].toLowerCase();
+                }
+                return null;
+            }
+            
+            let suggestion = suggestUsername('dr.silva@hospital.com');
+            assert(suggestion === 'dr.silva', 'Deve sugerir username baseado no email');
+            
+            suggestion = suggestUsername('admin@sistema.com');
+            assert(suggestion === 'admin', 'Deve converter para lowercase');
+            
+            suggestion = suggestUsername('usuariosememail');
+            assertNull(suggestion, 'Deve retornar null para entrada sem @');
+        }
+
+        // Função para executar todos os testes
+        function runAllTests() {
+            console.log('🚀 Iniciando testes...');
+            testResults = [];
+            
+            // Executa todos os testes
+            testLoadRegisteredUsers();
+            testGetAllUsers();
+            testValidateLogin();
+            testSaveUserSession();
+            testCheckExistingSession();
+            testUsernameSuggestion();
+            
+            // Exibe resultados
+            displayResults();
+        }
+
+        // Testes agrupados por seções amigáveis
+        function displayResults() {
+            const resultsDiv = document.getElementById('test-results');
+            const summaryDiv = document.getElementById('summary');
+            let passCount = 0, failCount = 0, html = '';
+
+            // Novo agrupamento mais amigável
+            const testSections = {
+                'Usuários Cadastrados': [],
+                'Todos os Usuários': [],
+                'Validação de Login': [],
+                'Sessão do Usuário': [],
+                'Sessão Existente': [],
+                'Sugestão de Username': []
+            };
+
+            testResults.forEach(result => {
+                if (result.status === 'PASS') passCount++;
+                else failCount++;
+
+                // Agrupamento por palavras-chave
+                const msg = result.message.toLowerCase();
+                if (msg.includes('usuários cadastrados')) testSections['Usuários Cadastrados'].push(result);
+                else if (msg.includes('pré-definidos') || msg.includes('getallusers')) testSections['Todos os Usuários'].push(result);
+                else if (msg.includes('login') || msg.includes('senha')) testSections['Validação de Login'].push(result);
+                else if (msg.includes('salvar sessão') || msg.includes('saveusersession')) testSections['Sessão do Usuário'].push(result);
+                else if (msg.includes('existente') || msg.includes('checkexistingsession')) testSections['Sessão Existente'].push(result);
+                else if (msg.includes('username') || msg.includes('email')) testSections['Sugestão de Username'].push(result);
+            });
+
+            // Renderização das seções
+            Object.entries(testSections).forEach(([section, items]) => {
+                if (items.length > 0) {
+                    html += `<div class="test-section">
+                        <h3>📋 ${section}</h3>`;
+                    items.forEach(result => {
+                        const className = result.status === 'PASS' ? 'test-pass' : 'test-fail';
+                        const icon = result.status === 'PASS' ? '✅' : '❌';
+                        html += `<div class="test-result ${className}">${icon} ${result.message}</div>`;
+                    });
+                    html += `</div>`;
+                }
+            });
+
+            resultsDiv.innerHTML = html;
+
+            // Resumo visual mais bonito com cartões
+            const totalTests = passCount + failCount;
+            const successRate = totalTests > 0 ? ((passCount / totalTests) * 100).toFixed(1) : 0;
+            summaryDiv.innerHTML = `
+                <div class="summary-card">
+                    <strong>Total</strong>
+                    <div class="value">${totalTests}</div>
+                </div>
+                <div class="summary-card">
+                    <strong>Passou</strong>
+                    <div class="value" style="color:#27ae60;">${passCount} ✅</div>
+                </div>
+                <div class="summary-card">
+                    <strong>Falhou</strong>
+                    <div class="value" style="color:#e74c3c;">${failCount} ❌</div>
+                </div>
+                <div class="summary-card">
+                    <strong>Sucesso</strong>
+                    <div class="value">${successRate}%</div>
+                </div>
+            `;
+            summaryDiv.style.display = 'flex';
+            console.log(`✅ Testes concluídos: ${passCount}/${totalTests} passaram`);
+        }
+
+        // Executa testes automaticamente ao carregar a página
+        window.onload = function() {
+            console.log('🔧 Sistema de testes carregado. Clique no botão para executar.');
+        };
+    </script>
+</body>
+</html>

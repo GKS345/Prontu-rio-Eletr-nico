@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testes Unitários - Novo Paciente</title>
+    <!-- Corrige o caminho do CSS para garantir o carregamento correto -->
+    <link rel="stylesheet" href="./css/pacienteNovosTest.css">
+</head>
+<body>
+    <nav class="nav-panel">
+        <a href="indexTest.html" class="nav-btn">Login</a>
+        <a href="pacientesTest.html" class="nav-btn">Pacientes</a>
+        <a href="pacienteNovosTest.html" class="nav-btn active">Novo Paciente</a>
+        <a href="reportsTest.html" class="nav-btn">Relatórios</a>
+    </nav>
+    <h1>🧪 Testes Unitários - Sistema de Novo Paciente</h1>
+    
+    <button onclick="runAllTests()">▶️ Executar Todos os Testes</button>
+    <button onclick="clearResults()" class="clear-btn">🗑️ Limpar Resultados</button>
+    
+    <div class="test-summary" id="summary" style="display: none;">
+        <h3>📊 Resumo dos Testes</h3>
+        <div id="summaryContent"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>📋 Resultados dos Testes</h2>
+        <div id="testResults"></div>
+    </div>
+
+    <script>
+        // ========================================
+        // FUNÇÕES EXTRAÍDAS DO CÓDIGO ORIGINAL
+        // ========================================
+
+        // Função para validar CPF
+        function isValidCPF(cpf) {
+            if (/^(\d)\1{10}$/.test(cpf)) return false;
+
+            let soma = 0;
+            for (let i = 0; i < 9; i++) {
+                soma += parseInt(cpf.charAt(i)) * (10 - i);
+            }
+            let resto = (soma * 10) % 11;
+            if (resto === 10 || resto === 11) resto = 0;
+            if (resto !== parseInt(cpf.charAt(9))) return false;
+
+            soma = 0;
+            for (let i = 0; i < 10; i++) {
+                soma += parseInt(cpf.charAt(i)) * (11 - i);
+            }
+            resto = (soma * 10) % 11;
+            if (resto === 10 || resto === 11) resto = 0;
+            if (resto !== parseInt(cpf.charAt(10))) return false;
+
+            return true;
+        }
+
+        // Função para formatar CPF
+        function formatCPFValue(value) {
+            value = value.replace(/\D/g, '');
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            return value;
+        }
+
+        // Função para formatar telefone
+        function formatPhoneValue(value) {
+            value = value.replace(/\D/g, '');
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
+            if (value.length <= 10) {
+                value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{4})(\d)/, '$1-$2');
+            } else {
+                value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            }
+            return value;
+        }
+
+        // Função para formatar CEP
+        function formatCEPValue(value) {
+            value = value.replace(/\D/g, '');
+            if (value.length > 8) {
+                value = value.substring(0, 8);
+            }
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            return value;
+        }
+
+        // Função para validar email
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Função para validar data de nascimento
+        function isValidBirthDate(dateString) {
+            const birthDate = new Date(dateString);
+            const today = new Date();
+            const age = today.getFullYear() - birthDate.getFullYear();
+            
+            if (birthDate > today) return false;
+            if (age > 120) return false;
+            return true;
+        }
+
+        // Função para calcular IMC
+        function calculateBMI(height, weight) {
+            if (!height || !weight || height <= 0 || weight <= 0) return null;
+            return weight / ((height / 100) * (height / 100));
+        }
+
+        // Função para obter categoria do IMC
+        function getBMICategory(bmi) {
+            if (bmi < 18.5) return { category: 'Abaixo do peso', color: '#3498db' };
+            if (bmi < 25) return { category: 'Peso normal', color: '#27ae60' };
+            if (bmi < 30) return { category: 'Sobrepeso', color: '#f39c12' };
+            if (bmi < 35) return { category: 'Obesidade grau I', color: '#e67e22' };
+            if (bmi < 40) return { category: 'Obesidade grau II', color: '#d35400' };
+            return { category: 'Obesidade grau III', color: '#c0392b' };
+        }
+
+        // Função para gerar ID do paciente
+        function generatePatientId() {
+            return 'PAC' + Date.now().toString().slice(-8);
+        }
+
+        // Função para validar faixa numérica
+        function isValidNumericRange(value, min, max) {
+            const num = parseFloat(value);
+            return !isNaN(num) && num >= min && num <= max;
+        }
+
+        // ========================================
+        // FRAMEWORK DE TESTES SIMPLES
+        // ========================================
+
+        let testResults = [];
+        let currentGroup = '';
+
+        function describe(groupName, testFunction) {
+            currentGroup = groupName;
+            console.log(`\n📁 ${groupName}`);
+            testFunction();
+            currentGroup = '';
+        }
+
+        function it(description, testFunction) {
+            try {
+                testFunction();
+                const result = {
+                    group: currentGroup,
+                    description: description,
+                    status: 'PASS',
+                    error: null
+                };
+                testResults.push(result);
+                console.log(`✅ ${description}`);
+            } catch (error) {
+                const result = {
+                    group: currentGroup,
+                    description: description,
+                    status: 'FAIL',
+                    error: error.message
+                };
+                testResults.push(result);
+                console.log(`❌ ${description}: ${error.message}`);
+            }
+        }
+
+        function expect(actual) {
+            return {
+                toBe: function(expected) {
+                    if (actual !== expected) {
+                        throw new Error(`Esperado: ${expected}, Recebido: ${actual}`);
+                    }
+                },
+                toEqual: function(expected) {
+                    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+                        throw new Error(`Esperado: ${JSON.stringify(expected)}, Recebido: ${JSON.stringify(actual)}`);
+                    }
+                },
+                toBeTruthy: function() {
+                    if (!actual) {
+                        throw new Error(`Esperado valor verdadeiro, recebido: ${actual}`);
+                    }
+                },
+                toBeFalsy: function() {
+                    if (actual) {
+                        throw new Error(`Esperado valor falso, recebido: ${actual}`);
+                    }
+                },
+                toBeNull: function() {
+                    if (actual !== null) {
+                        throw new Error(`Esperado null, recebido: ${actual}`);
+                    }
+                },
+                toContain: function(expected) {
+                    if (!actual.includes(expected)) {
+                        throw new Error(`Esperado que "${actual}" contenha "${expected}"`);
+                    }
+                },
+                toBeGreaterThan: function(expected) {
+                    if (actual <= expected) {
+                        throw new Error(`Esperado ${actual} > ${expected}`);
+                    }
+                },
+                toBeLessThan: function(expected) {
+                    if (actual >= expected) {
+                        throw new Error(`Esperado ${actual} < ${expected}`);
+                    }
+                }
+            };
+        }
+
+        // ========================================
+        // TESTES UNITÁRIOS
+        // ========================================
+
+        function runAllTests() {
+            testResults = [];
+            console.clear();
+            console.log('🚀 Iniciando testes unitários...\n');
+
+            // Testes de validação de CPF
+            describe('Validação de CPF', () => {
+                it('deve aceitar CPF válido de paciente real', () => {
+                    expect(isValidCPF('52998224725')).toBeTruthy(); // CPF válido real
+                });
+
+                it('deve rejeitar CPF com todos os dígitos iguais', () => {
+                    expect(isValidCPF('11111111111')).toBeFalsy();
+                    expect(isValidCPF('00000000000')).toBeFalsy();
+                });
+
+                it('deve rejeitar CPF inválido de paciente', () => {
+                    expect(isValidCPF('12345678901')).toBeFalsy();
+                    expect(isValidCPF('12312312312')).toBeFalsy();
+                });
+
+                it('deve rejeitar CPF incompleto', () => {
+                    expect(isValidCPF('123456789')).toBeFalsy();
+                });
+            });
+
+            // Testes de formatação de CPF
+            describe('Formatação de CPF', () => {
+                it('deve formatar CPF de paciente corretamente', () => {
+                    expect(formatCPFValue('52998224725')).toBe('529.982.247-25');
+                });
+
+                it('deve formatar CPF parcial', () => {
+                    expect(formatCPFValue('529982')).toBe('529.982');
+                    expect(formatCPFValue('52998224')).toBe('529.982.24');
+                });
+
+                it('deve remover caracteres não numéricos do CPF', () => {
+                    expect(formatCPFValue('529.982.247-25')).toBe('529.982.247-25');
+                    expect(formatCPFValue('529abc982def')).toBe('529.982');
+                });
+
+                it('deve limitar CPF a 11 dígitos', () => {
+                    expect(formatCPFValue('529982247251234')).toBe('529.982.247-25');
+                });
+            });
+
+            // Testes de formatação de telefone
+            describe('Formatação de Telefone', () => {
+                it('deve formatar telefone fixo corretamente', () => {
+                    expect(formatPhoneValue('1133224455')).toBe('(11) 3322-4455');
+                });
+
+                it('deve formatar celular corretamente', () => {
+                    expect(formatPhoneValue('11987654321')).toBe('(11) 98765-4321');
+                });
+
+                it('deve formatar telefone parcial', () => {
+                    expect(formatPhoneValue('11987')).toBe('(11) 987');
+                });
+
+                it('deve remover caracteres não numéricos do telefone', () => {
+                    expect(formatPhoneValue('(11) 3322-4455')).toBe('(11) 3322-4455');
+                });
+            });
+
+            // Testes de formatação de CEP
+            describe('Formatação de CEP', () => {
+                it('deve formatar CEP completo', () => {
+                    expect(formatCEPValue('12345678')).toBe('12345-678');
+                });
+
+                it('deve formatar CEP parcial', () => {
+                    expect(formatCEPValue('12345')).toBe('12345');
+                    expect(formatCEPValue('123456')).toBe('12345-6');
+                });
+
+                it('deve remover caracteres não numéricos do CEP', () => {
+                    expect(formatCEPValue('12345-678')).toBe('12345-678');
+                });
+
+                it('deve limitar CEP a 8 dígitos', () => {
+                    expect(formatCEPValue('123456789012')).toBe('12345-678');
+                });
+            });
+
+            // Testes de validação de email
+            describe('Validação de Email', () => {
+                it('deve aceitar email válido de paciente', () => {
+                    expect(isValidEmail('maria.silva@gmail.com')).toBeTruthy();
+                    expect(isValidEmail('joao.santos@empresa.com.br')).toBeTruthy();
+                });
+
+                it('deve rejeitar email inválido', () => {
+                    expect(isValidEmail('email-invalido')).toBeFalsy();
+                    expect(isValidEmail('maria@')).toBeFalsy();
+                    expect(isValidEmail('@gmail.com')).toBeFalsy();
+                    expect(isValidEmail('maria@gmail')).toBeFalsy();
+                });
+
+                it('deve rejeitar email com espaços', () => {
+                    expect(isValidEmail('maria @gmail.com')).toBeFalsy();
+                    expect(isValidEmail('maria@ gmail.com')).toBeFalsy();
+                });
+            });
+
+            // Testes de validação de data de nascimento
+            describe('Validação de Data de Nascimento', () => {
+                it('deve aceitar data de nascimento válida', () => {
+                    expect(isValidBirthDate('1985-05-20')).toBeTruthy();
+                    expect(isValidBirthDate('2002-12-01')).toBeTruthy();
+                });
+
+                it('deve rejeitar data de nascimento futura', () => {
+                    const futureDate = new Date();
+                    futureDate.setFullYear(futureDate.getFullYear() + 1);
+                    expect(isValidBirthDate(futureDate.toISOString().split('T')[0])).toBeFalsy();
+                });
+
+                it('deve rejeitar data de nascimento muito antiga', () => {
+                    expect(isValidBirthDate('1900-01-01')).toBeFalsy();
+                });
+            });
+
+            // Testes de cálculo de IMC
+            describe('Cálculo de IMC', () => {
+                it('deve calcular IMC de paciente adulto', () => {
+                    const bmi = calculateBMI(170, 70);
+                    expect(bmi).toBeGreaterThan(24.2);
+                    expect(bmi).toBeLessThan(24.3);
+                });
+
+                it('deve retornar null para altura ou peso inválidos', () => {
+                    expect(calculateBMI(0, 70)).toBeNull();
+                    expect(calculateBMI(170, 0)).toBeNull();
+                    expect(calculateBMI(null, 70)).toBeNull();
+                    expect(calculateBMI(170, null)).toBeNull();
+                });
+
+                it('deve calcular IMC para diferentes pacientes', () => {
+                    expect(calculateBMI(180, 80)).toBeGreaterThan(24.6);
+                    expect(calculateBMI(160, 50)).toBeLessThan(19.6);
+                });
+            });
+
+            // Testes de categoria de IMC
+            describe('Categoria de IMC', () => {
+                it('deve classificar paciente abaixo do peso', () => {
+                    expect(getBMICategory(17).category).toBe('Abaixo do peso');
+                });
+
+                it('deve classificar paciente com peso normal', () => {
+                    expect(getBMICategory(22).category).toBe('Peso normal');
+                });
+
+                it('deve classificar paciente com sobrepeso', () => {
+                    expect(getBMICategory(27).category).toBe('Sobrepeso');
+                });
+
+                it('deve classificar paciente com obesidade grau I', () => {
+                    expect(getBMICategory(32).category).toBe('Obesidade grau I');
+                });
+
+                it('deve classificar paciente com obesidade grau II', () => {
+                    expect(getBMICategory(37).category).toBe('Obesidade grau II');
+                });
+
+                it('deve classificar paciente com obesidade grau III', () => {
+                    expect(getBMICategory(42).category).toBe('Obesidade grau III');
+                });
+            });
+
+            // Testes de geração de ID
+            describe('Geração de ID do Paciente', () => {
+                it('deve gerar ID único para novo paciente', () => {
+                    const id = generatePatientId();
+                    expect(id).toContain('PAC');
+                    expect(id.length).toBe(11); // PAC + 8 dígitos
+                });
+
+                it('deve gerar IDs diferentes para pacientes distintos', () => {
+                    const id1 = generatePatientId();
+                    // Pequeno delay para garantir diferença de timestamp
+                    setTimeout(() => {
+                        const id2 = generatePatientId();
+                        expect(id1 === id2).toBeFalsy();
+                        displayResults(); // Atualiza resultados após o teste assíncrono
+                    }, 5);
+                });
+            });
+
+            // Testes de validação de faixa numérica
+            describe('Validação de Altura e Peso', () => {
+                it('deve aceitar altura válida de paciente', () => {
+                    expect(isValidNumericRange(170, 50, 250)).toBeTruthy();
+                    expect(isValidNumericRange(180.5, 50, 250)).toBeTruthy();
+                });
+
+                it('deve rejeitar altura fora do intervalo', () => {
+                    expect(isValidNumericRange(30, 50, 250)).toBeFalsy();
+                    expect(isValidNumericRange(300, 50, 250)).toBeFalsy();
+                });
+
+                it('deve aceitar peso válido de paciente', () => {
+                    expect(isValidNumericRange(70, 1, 500)).toBeTruthy();
+                    expect(isValidNumericRange(85.5, 1, 500)).toBeTruthy();
+                });
+
+                it('deve rejeitar peso fora do intervalo', () => {
+                    expect(isValidNumericRange(0, 1, 500)).toBeFalsy();
+                    expect(isValidNumericRange(600, 1, 500)).toBeFalsy();
+                });
+
+                it('deve rejeitar valores não numéricos', () => {
+                    expect(isValidNumericRange('abc', 1, 100)).toBeFalsy();
+                    expect(isValidNumericRange('', 1, 100)).toBeFalsy();
+                });
+            });
+
+            // Exibe resultados
+            displayResults();
+        }
+
+        // ========================================
+        // EXIBIÇÃO DOS RESULTADOS
+        // ========================================
+
+        // Exibição dos resultados mais bonita e clara
+        function displayResults() {
+            const resultsContainer = document.getElementById('testResults');
+            const summaryContainer = document.getElementById('summaryContent');
+            const summarySection = document.getElementById('summary');
+            let html = '', currentGroup = '', passCount = 0, failCount = 0;
+
+            testResults.forEach(result => {
+                if (result.group !== currentGroup) {
+                    if (currentGroup !== '') html += '</div>';
+                    html += `<div class="test-group"><h3>📁 ${result.group}</h3>`;
+                    currentGroup = result.group;
+                }
+                const statusClass = result.status === 'PASS' ? 'test-pass' : 'test-fail';
+                const icon = result.status === 'PASS' ? '✅' : '❌';
+                html += `<div class="test-result ${statusClass}">
+                    ${icon} ${result.description}`;
+                if (result.error) html += `<br><small>💥 ${result.error}</small>`;
+                html += '</div>';
+                if (result.status === 'PASS') passCount++; else failCount++;
+            });
+            if (currentGroup !== '') html += '</div>';
+            resultsContainer.innerHTML = html;
+
+            // Resumo mais destacado
+            const total = passCount + failCount;
+            const successRate = total > 0 ? (passCount / total * 100).toFixed(1) : 0;
+            summaryContainer.innerHTML = `
+                <div style="display: flex; justify-content: space-around; font-size: 18px;">
+                    <div><strong>Total:</strong> ${total}</div>
+                    <div style="color:#28a745;"><strong>Passou:</strong> ${passCount} ✅</div>
+                    <div style="color:#dc3545;"><strong>Falhou:</strong> ${failCount} ❌</div>
+                    <div><strong>Sucesso:</strong> ${successRate}%</div>
+                </div>
+            `;
+            summarySection.style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function clearResults() {
+            document.getElementById('testResults').innerHTML = '';
+            document.getElementById('summary').style.display = 'none';
+            testResults = [];
+            console.clear();
+        }
+
+        // Executa os testes automaticamente ao carregar a página
+        window.onload = function() {
+            console.log('🔧 Sistema de testes carregado. Clique em "Executar Todos os Testes" para começar.');
+        };
+    </script>
+</body>
+</html>

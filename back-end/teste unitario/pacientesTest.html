@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testes Unitários - Sistema de Pacientes</title>
+    <!-- Corrige o caminho do CSS para garantir o carregamento correto -->
+    <link rel="stylesheet" href="./css/pacientesTest.css">
+</head>
+<body>
+    <nav class="nav-panel">
+        <a href="indexTest.html" class="nav-btn">Login</a>
+        <a href="pacientesTest.html" class="nav-btn active">Pacientes</a>
+        <a href="pacienteNovosTest.html" class="nav-btn">Novo Paciente</a>
+        <a href="reportsTest.html" class="nav-btn">Relatórios</a>
+    </nav>
+    <h1>🧪 Testes Unitários - Sistema de Pacientes</h1>
+    
+    <button class="run-tests-btn" onclick="runAllTests()">▶️ Executar Todos os Testes</button>
+    
+    <div id="testResults"></div>
+
+    <script>
+        // Dados de teste simulando o sistema
+        const testPatientsData = [
+            {
+                id: 1,
+                name: "Maria Santos Silva",
+                phone: "(11) 99999-9999",
+                email: "maria@email.com",
+                age: 45,
+                cpf: "123.456.789-00",
+                address: "Rua das Flores, 123 - São Paulo, SP",
+                lastConsultation: "20/06/2025",
+                slug: "maria"
+            },
+            {
+                id: 2,
+                name: "José Oliveira Costa",
+                phone: "(11) 88888-8888",
+                email: "jose@email.com",
+                age: 62,
+                cpf: "987.654.321-00",
+                address: "Av. Paulista, 456 - São Paulo, SP",
+                lastConsultation: "15/06/2025",
+                slug: "jose"
+            },
+            {
+                id: 3,
+                name: "Ana Costa Pereira",
+                phone: "(11) 77777-7777",
+                email: "ana@email.com",
+                age: 28,
+                cpf: "456.789.123-00",
+                address: "Rua da Consolação, 789 - São Paulo, SP",
+                lastConsultation: "10/06/2025",
+                slug: "ana"
+            }
+        ];
+
+        // Simulação das funções principais para teste
+        let allPatients = [...testPatientsData];
+        let filteredPatients = [...testPatientsData];
+
+        function searchPatients(query) {
+            if (!query.trim()) {
+                filteredPatients = [...allPatients];
+                return;
+            }
+
+            const searchTerm = query.toLowerCase().trim();
+            filteredPatients = allPatients.filter(patient => {
+                return patient.name.toLowerCase().includes(searchTerm) ||
+                    patient.cpf.includes(searchTerm) ||
+                    patient.phone.includes(searchTerm) ||
+                    patient.email.toLowerCase().includes(searchTerm);
+            });
+        }
+
+        function findPatientById(patientId) {
+            return allPatients.find(p => p.id === patientId);
+        }
+
+        function findPatientBySlug(patientSlug) {
+            return allPatients.find(p => p.slug === patientSlug);
+        }
+
+        function validateConsultationData(date, time) {
+            return date && time;
+        }
+
+        function validatePatientData(name, phone, email) {
+            return name && phone && email;
+        }
+
+        function validatePrescriptionData(medication, dosage, frequency) {
+            return medication && dosage && frequency;
+        }
+
+        function sortPatients(patients, sortBy, order) {
+            return patients.sort((a, b) => {
+                let aValue, bValue;
+
+                switch (sortBy) {
+                    case 'name':
+                        aValue = a.name.toLowerCase();
+                        bValue = b.name.toLowerCase();
+                        break;
+                    case 'age':
+                        aValue = a.age;
+                        bValue = b.age;
+                        break;
+                    case 'lastConsultation':
+                        aValue = new Date(a.lastConsultation.split('/').reverse().join('-'));
+                        bValue = new Date(b.lastConsultation.split('/').reverse().join('-'));
+                        break;
+                }
+
+                if (order === 'asc') {
+                    return aValue > bValue ? 1 : -1;
+                } else {
+                    return aValue < bValue ? 1 : -1;
+                }
+            });
+        }
+
+        // Framework de teste simples
+        class SimpleTestFramework {
+            constructor() {
+                this.results = [];
+                this.currentSuite = '';
+            }
+
+            describe(suiteName, testFunction) {
+                this.currentSuite = suiteName;
+                testFunction();
+            }
+
+            it(testName, testFunction) {
+                try {
+                    testFunction();
+                    this.results.push({
+                        suite: this.currentSuite,
+                        test: testName,
+                        status: 'PASS',
+                        error: null
+                    });
+                } catch (error) {
+                    this.results.push({
+                        suite: this.currentSuite,
+                        test: testName,
+                        status: 'FAIL',
+                        error: error.message
+                    });
+                }
+            }
+
+            expect(actual) {
+                return {
+                    toBe: (expected) => {
+                        if (actual !== expected) {
+                            throw new Error(`Esperado: ${expected}, Recebido: ${actual}`);
+                        }
+                    },
+                    toEqual: (expected) => {
+                        if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+                            throw new Error(`Esperado: ${JSON.stringify(expected)}, Recebido: ${JSON.stringify(actual)}`);
+                        }
+                    },
+                    toBeNull: () => {
+                        if (actual !== null) {
+                            throw new Error(`Esperado: null, Recebido: ${actual}`);
+                        }
+                    },
+                    toBeUndefined: () => {
+                        if (actual !== undefined) {
+                            throw new Error(`Esperado: undefined, Recebido: ${actual}`);
+                        }
+                    },
+                    toBeTruthy: () => {
+                        if (!actual) {
+                            throw new Error(`Esperado valor truthy, Recebido: ${actual}`);
+                        }
+                    },
+                    toBeFalsy: () => {
+                        if (actual) {
+                            throw new Error(`Esperado valor falsy, Recebido: ${actual}`);
+                        }
+                    },
+                    toContain: (expected) => {
+                        if (!actual.includes(expected)) {
+                            throw new Error(`Esperado que ${actual} contenha ${expected}`);
+                        }
+                    },
+                    toHaveLength: (expected) => {
+                        if (actual.length !== expected) {
+                            throw new Error(`Esperado comprimento: ${expected}, Recebido: ${actual.length}`);
+                        }
+                    }
+                };
+            }
+
+            getResults() {
+                return this.results;
+            }
+
+            reset() {
+                this.results = [];
+                this.currentSuite = '';
+            }
+        }
+
+        const test = new SimpleTestFramework();
+
+        // Testes unitários
+        function runAllTests() {
+            test.reset();
+            
+            // Resetar dados para cada teste
+            allPatients = [...testPatientsData];
+            filteredPatients = [...testPatientsData];
+
+            // Testes de busca
+            test.describe('Funcionalidade de Busca', () => {
+                test.it('deve filtrar pacientes por nome', () => {
+                    searchPatients('Maria');
+                    test.expect(filteredPatients).toHaveLength(1);
+                    test.expect(filteredPatients[0].name).toBe('Maria Santos Silva');
+                });
+
+                test.it('deve filtrar pacientes por CPF', () => {
+                    searchPatients('123.456.789-00');
+                    test.expect(filteredPatients).toHaveLength(1);
+                    test.expect(filteredPatients[0].name).toBe('Maria Santos Silva');
+                });
+
+                test.it('deve filtrar pacientes por telefone', () => {
+                    searchPatients('(11) 88888-8888');
+                    test.expect(filteredPatients).toHaveLength(1);
+                    test.expect(filteredPatients[0].name).toBe('José Oliveira Costa');
+                });
+
+                test.it('deve filtrar pacientes por email', () => {
+                    searchPatients('ana@email.com');
+                    test.expect(filteredPatients).toHaveLength(1);
+                    test.expect(filteredPatients[0].name).toBe('Ana Costa Pereira');
+                });
+
+                test.it('deve ser case-insensitive', () => {
+                    searchPatients('MARIA');
+                    test.expect(filteredPatients).toHaveLength(1);
+                    test.expect(filteredPatients[0].name).toBe('Maria Santos Silva');
+                });
+
+                test.it('deve retornar lista vazia para busca inexistente', () => {
+                    searchPatients('Paciente Inexistente');
+                    test.expect(filteredPatients).toHaveLength(0);
+                });
+
+                test.it('deve retornar todos os pacientes para busca vazia', () => {
+                    searchPatients('');
+                    test.expect(filteredPatients).toHaveLength(3);
+                });
+
+                test.it('deve ignorar espaços em branco', () => {
+                    searchPatients('  Maria  ');
+                    test.expect(filteredPatients).toHaveLength(1);
+                    test.expect(filteredPatients[0].name).toBe('Maria Santos Silva');
+                });
+            });
+
+            // Testes de busca por ID
+            test.describe('Busca por ID', () => {
+                test.it('deve encontrar paciente por ID válido', () => {
+                    const patient = findPatientById(1);
+                    test.expect(patient).toBeTruthy();
+                    test.expect(patient.name).toBe('Maria Santos Silva');
+                });
+
+                test.it('deve retornar undefined para ID inválido', () => {
+                    const patient = findPatientById(999);
+                    test.expect(patient).toBeUndefined();
+                });
+
+                test.it('deve retornar undefined para ID null', () => {
+                    const patient = findPatientById(null);
+                    test.expect(patient).toBeUndefined();
+                });
+            });
+
+            // Testes de busca por slug
+            test.describe('Busca por Slug', () => {
+                test.it('deve encontrar paciente por slug válido', () => {
+                    const patient = findPatientBySlug('maria');
+                    test.expect(patient).toBeTruthy();
+                    test.expect(patient.name).toBe('Maria Santos Silva');
+                });
+
+                test.it('deve retornar undefined para slug inválido', () => {
+                    const patient = findPatientBySlug('inexistente');
+                    test.expect(patient).toBeUndefined();
+                });
+
+                test.it('deve retornar undefined para slug null', () => {
+                    const patient = findPatientBySlug(null);
+                    test.expect(patient).toBeUndefined();
+                });
+            });
+
+            // Testes de validação
+            test.describe('Validação de Dados', () => {
+                test.it('deve validar dados de consulta válidos', () => {
+                    const isValid = validateConsultationData('2025-07-15', '14:30');
+                    test.expect(isValid).toBeTruthy();
+                });
+
+                test.it('deve invalidar dados de consulta sem data', () => {
+                    const isValid = validateConsultationData('', '14:30');
+                    test.expect(isValid).toBeFalsy();
+                });
+
+                test.it('deve invalidar dados de consulta sem horário', () => {
+                    const isValid = validateConsultationData('2025-07-15', '');
+                    test.expect(isValid).toBeFalsy();
+                });
+
+                test.it('deve validar dados de paciente válidos', () => {
+                    const isValid = validatePatientData('João Silva', '(11) 99999-9999', 'joao@email.com');
+                    test.expect(isValid).toBeTruthy();
+                });
+
+                test.it('deve invalidar dados de paciente sem nome', () => {
+                    const isValid = validatePatientData('', '(11) 99999-9999', 'joao@email.com');
+                    test.expect(isValid).toBeFalsy();
+                });
+
+                test.it('deve validar dados de receita válidos', () => {
+                    const isValid = validatePrescriptionData('Dipirona', '500mg', '3x ao dia');
+                    test.expect(isValid).toBeTruthy();
+                });
+
+                test.it('deve invalidar dados de receita sem medicamento', () => {
+                    const isValid = validatePrescriptionData('', '500mg', '3x ao dia');
+                    test.expect(isValid).toBeFalsy();
+                });
+            });
+
+            // Testes de ordenação
+            test.describe('Ordenação de Pacientes', () => {
+                test.it('deve ordenar pacientes por nome (crescente)', () => {
+                    const patients = [...testPatientsData];
+                    const sorted = sortPatients(patients, 'name', 'asc');
+                    test.expect(sorted[0].name).toBe('Ana Costa Pereira');
+                    test.expect(sorted[1].name).toBe('José Oliveira Costa');
+                    test.expect(sorted[2].name).toBe('Maria Santos Silva');
+                });
+
+                test.it('deve ordenar pacientes por nome (decrescente)', () => {
+                    const patients = [...testPatientsData];
+                    const sorted = sortPatients(patients, 'name', 'desc');
+                    test.expect(sorted[0].name).toBe('Maria Santos Silva');
+                    test.expect(sorted[1].name).toBe('José Oliveira Costa');
+                    test.expect(sorted[2].name).toBe('Ana Costa Pereira');
+                });
+
+                test.it('deve ordenar pacientes por idade (crescente)', () => {
+                    const patients = [...testPatientsData];
+                    const sorted = sortPatients(patients, 'age', 'asc');
+                    test.expect(sorted[0].age).toBe(28);
+                    test.expect(sorted[1].age).toBe(45);
+                    test.expect(sorted[2].age).toBe(62);
+                });
+
+                test.it('deve ordenar pacientes por idade (decrescente)', () => {
+                    const patients = [...testPatientsData];
+                    const sorted = sortPatients(patients, 'age', 'desc');
+                    test.expect(sorted[0].age).toBe(62);
+                    test.expect(sorted[1].age).toBe(45);
+                    test.expect(sorted[2].age).toBe(28);
+                });
+            });
+
+            // Exibir resultados
+            displayResults(test.getResults());
+        }
+
+        // Exibição dos resultados mais bonita
+        function displayResults(results) {
+            const container = document.getElementById('testResults');
+            container.innerHTML = '';
+            const suites = [...new Set(results.map(r => r.suite))];
+            let totalTests = results.length;
+            let passedTests = results.filter(r => r.status === 'PASS').length;
+            let failedTests = totalTests - passedTests;
+
+            // Resumo visual
+            const summary = document.createElement('div');
+            summary.className = `test-summary ${failedTests === 0 ? 'summary-pass' : 'summary-fail'}`;
+            summary.innerHTML = `
+                <div style="display: flex; justify-content: space-around; font-size: 18px;">
+                    <div><strong>Total:</strong> ${totalTests}</div>
+                    <div style="color:#28a745;"><strong>Passou:</strong> ${passedTests} ✅</div>
+                    <div style="color:#dc3545;"><strong>Falhou:</strong> ${failedTests} ❌</div>
+                    <div><strong>Sucesso:</strong> ${((passedTests/totalTests)*100).toFixed(1)}%</div>
+                </div>
+            `;
+            container.appendChild(summary);
+
+            // Resultados por suite
+            suites.forEach(suite => {
+                const suiteResults = results.filter(r => r.suite === suite);
+                const suiteContainer = document.createElement('div');
+                suiteContainer.className = 'test-container';
+                const suiteHeader = document.createElement('h2');
+                suiteHeader.textContent = suite;
+                suiteContainer.appendChild(suiteHeader);
+
+                suiteResults.forEach(result => {
+                    const testResult = document.createElement('div');
+                    testResult.className = `test-result ${result.status === 'PASS' ? 'test-pass' : 'test-fail'}`;
+                    testResult.innerHTML = `
+                        <strong>${result.status === 'PASS' ? '✅' : '❌'} ${result.test}</strong>
+                        ${result.error ? `<br>💥 Erro: ${result.error}` : ''}
+                    `;
+                    suiteContainer.appendChild(testResult);
+                });
+
+                container.appendChild(suiteContainer);
+            });
+
+            // Scroll para o topo dos resultados
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
