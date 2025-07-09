@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const dynamicUsers = {};
 
         registeredUsers.forEach(user => {
-            // Criar username baseado no email (parte antes do @)
+            // Criar username
             const username = user.fullName;
 
             dynamicUsers[username] = {
