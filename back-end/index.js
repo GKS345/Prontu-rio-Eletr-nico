@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <h6 style="margin-bottom: 5px; color: #27ae60;">📋 Usuários Cadastrados (${registeredCount}):</h6>
                         <div style="font-size: 0.8em; color: #666;">
                             ${Object.keys(registeredUsers).map(username =>
-                    `<div><strong>${username}</strong> (${registeredUsers[username].name})</div>`
+                    `<div><strong>${username}</strong> (${registeredUsers[username].specialty})</div>`
                 ).join('')}
                         </div>
                         <div style="font-size: 0.75em; color: #999; margin-top: 5px;">
