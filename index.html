@@ -3,44 +3,358 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedSystem - Prontuário Online</title>
-    <link rel="stylesheet" href="Front-end/styles.css">
+    <title>Exames - Sistema Médico</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- LOGIN SCREEN -->
-    <div id="loginScreen" class="screen">
-        <div class="login-screen">
-            <div class="logo">🏥 MedSystem</div>
-            <p class="subtitle">Sistema de Prontuário Eletrônico</p>
-            
-            <div class="login-hints">
-                <h4>👤 Acesso Rápido:</h4>
-                <p>Clique no botão verde abaixo para acessar diretamente o sistema</p>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">MedSystem</div>
             </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html">📊 Visão Geral</a></li>
+                <li><a href="patients.html">👥 Pacientes</a></li>
+                <li><a href="new-patient.html">➕ Novo Paciente</a></li>
+                <li><a href="appointments.html">📅 Consultas</a></li>
+                <li><a href="exams.html" class="active">🔬 Exames</a></li>
+                <li><a href="prescriptions.html">💊 Receitas</a></li>
+                <li><a href="reports.html">📋 Relatórios</a></li>
+                <li><a href="./index.html">🚪 Sair</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="page-title">Exames</h1>
+                <div class="user-info">
+                    <span>Dr. João Silva</span>
+                    <div class="user-avatar">JS</div>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">15</div>
+                    <div class="stat-label">Pendentes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Hoje</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">23</div>
+                    <div class="stat-label">Esta Semana</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">127</div>
+                    <div class="stat-label">Este Mês</div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 15px; margin-bottom: 30px; align-items: center; flex-wrap: wrap;">
+                    <button class="btn" onclick="openRequestExamModal()">
+                        🔬 Solicitar Exame
+                    </button>
+                    <button class="btn btn-secondary" onclick="openResultModal()">
+                        📊 Registrar Resultado
+                    </button>
+                    <div style="display: flex; gap: 10px; margin-left: auto; flex-wrap: wrap;">
+                        <input type="date" id="filterDate" class="form-control" style="width: auto;">
+                        <select id="filterStatus" style="width: auto;">
+                            <option value="">Todos os Status</option>
+                            <option value="solicitado">Solicitado</option>
+                            <option value="agendado">Agendado</option>
+                            <option value="realizado">Realizado</option>
+                            <option value="resultado_pronto">Resultado Pronto</option>
+                            <option value="entregue">Entregue</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
+                        <select id="filterType" style="width: auto;">
+                            <option value="">Todos os Tipos</option>
+                            <option value="laboratorio">Laboratório</option>
+                            <option value="imagem">Imagem</option>
+                            <option value="cardiologico">Cardiológico</option>
+                            <option value="neurologico">Neurológico</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Exams List -->
+                <div id="examsList">
+                    <!-- Today's Exams -->
+                    <h3 style="color: #2c3e50; margin-bottom: 20px; border-left: 4px solid #e74c3c; padding-left: 15px;">
+                        🔬 Exames de Hoje - 30 de Junho, 2025
+                    </h3>
+
+                    <div class="exam-card">
+                        <div class="exam-header">
+                            <div>
+                                <div class="exam-title">Hemograma Completo</div>
+                                <div style="color: #666; margin: 5px 0;">
+                                    👤 <strong>Maria Santos Silva</strong> | 🆔 #001
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="exam-date">30/06/2025 - 08:00</div>
+                                <span class="status-badge status-realizado" style="background: #d4edda; color: #155724;">Realizado</span>
+                            </div>
+                        </div>
+                        <div class="exam-result">
+                            <strong>📋 Tipo:</strong> Laboratório | <strong>🏥 Local:</strong> Lab Central<br>
+                            <strong>📝 Indicação:</strong> Rotina pré-operatória<br>
+                            <strong>⚠️ Observações:</strong> Paciente em jejum de 12h
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                            <button class="btn-small btn-primary" onclick="viewResult(1)">📊 Ver Resultado</button>
+                            <button class="btn-small btn-success" onclick="downloadResult(1)">📥 Download</button>
+                            <button class="btn-small btn-warning" onclick="sendToPatient(1)">📧 Enviar ao Paciente</button>
+                            <button class="btn-small btn-primary" onclick="printResult(1)">🖨️ Imprimir</button>
+                        </div>
+                    </div>
+
+                    <div class="exam-card">
+                        <div class="exam-header">
+                            <div>
+                                <div class="exam-title">Raio-X Tórax</div>
+                                <div style="color: #666; margin: 5px 0;">
+                                    👤 <strong>João Oliveira</strong> | 🆔 #002
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="exam-date">30/06/2025 - 14:00</div>
+                                <span class="status-badge status-agendado" style="background: #cce5ff; color: #004085;">Agendado</span>
+                            </div>
+                        </div>
+                        <div class="exam-result">
+                            <strong>📋 Tipo:</strong> Imagem | <strong>🏥 Local:</strong> Clínica Radiológica<br>
+                            <strong>📝 Indicação:</strong> Investigação de tosse persistente<br>
+                            <strong>⚠️ Preparação:</strong> Remover objetos metálicos
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                            <button class="btn-small btn-warning" onclick="rescheduleExam(2)">📅 Reagendar</button>
+                            <button class="btn-small btn-success" onclick="viewPatient(2)">👤 Ver Paciente</button>
+                            <button class="btn-small btn-danger" onclick="cancelExam(2)">❌ Cancelar</button>
+                        </div>
+                    </div>
+
+                    <!-- Pending Results -->
+                    <h3 style="color: #2c3e50; margin: 40px 0 20px 0; border-left: 4px solid #f39c12; padding-left: 15px;">
+                        ⏳ Resultados Pendentes
+                    </h3>
+
+                    <div class="exam-card">
+                        <div class="exam-header">
+                            <div>
+                                <div class="exam-title">Ecocardiograma</div>
+                                <div style="color: #666; margin: 5px 0;">
+                                    👤 <strong>Carlos Ferreira</strong> | 🆔 #004
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="exam-date">28/06/2025</div>
+                                <span class="status-badge status-realizado" style="background: #d4edda; color: #155724;">Realizado</span>
+                            </div>
+                        </div>
+                        <div class="exam-result">
+                            <strong>📋 Tipo:</strong> Cardiológico | <strong>🏥 Local:</strong> Cardio Center<br>
+                            <strong>📝 Indicação:</strong> Avaliação da função cardíaca<br>
+                            <strong>📞 Status:</strong> Aguardando laudo do especialista
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                            <button class="btn-small btn-primary" onclick="followUpExam(4)">📞 Acompanhar</button>
+                            <button class="btn-small btn-warning" onclick="requestUrgent(4)">⚡ Urgente</button>
+                            <button class="btn-small btn-success" onclick="viewPatient(4)">👤 Ver Paciente</button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Results -->
+                    <h3 style="color: #2c3e50; margin: 40px 0 20px 0; border-left: 4px solid #27ae60; padding-left: 15px;">
+                        ✅ Resultados Recentes
+                    </h3>
+
+                    <div class="exam-card">
+                        <div class="exam-header">
+                            <div>
+                                <div class="exam-title">Glicemia de Jejum</div>
+                                <div style="color: #666; margin: 5px 0;">
+                                    👤 <strong>Lucia Mendes</strong> | 🆔 #005
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="exam-date">29/06/2025</div>
+                                <span class="status-badge status-completed" style="background: #cce5ff; color: #004085;">Resultado Pronto</span>
+                            </div>
+                        </div>
+                        <div class="exam-result">
+                            <strong>📋 Tipo:</strong> Laboratório | <strong>🏥 Local:</strong> Lab Express<br>
+                            <strong>📊 Resultado:</strong> 95 mg/dL (Normal)<br>
+                            <strong>📝 Observação:</strong> Valores dentro da normalidade
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                            <button class="btn-small btn-primary" onclick="viewResult(5)">📊 Ver Completo</button>
+                            <button class="btn-small btn-success" onclick="downloadResult(5)">📥 Download</button>
+                            <button class="btn-small btn-warning" onclick="scheduleFollowUp(5)">📅 Agendar Retorno</button>
+                            <button class="btn-small btn-primary" onclick="addToHistory(5)">📋 Adicionar ao Histórico</button>
+                        </div>
+                    </div>
+
+                    <div class="exam-card">
+                        <div class="exam-header">
+                            <div>
+                                <div class="exam-title">Ultrassom Abdominal</div>
+                                <div style="color: #666; margin: 5px 0;">
+                                    👤 <strong>Ana Costa</strong> | 🆔 #003
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="exam-date">27/06/2025</div>
+                                <span class="status-badge status-entregue" style="background: #d1ecf1; color: #0c5460;">Entregue</span>
+                            </div>
+                        </div>
+                        <div class="exam-result">
+                            <strong>📋 Tipo:</strong> Imagem | <strong>🏥 Local:</strong> Diagnóstico Center<br>
+                            <strong>📊 Resultado:</strong> Estruturas dentro da normalidade<br>
+                            <strong>📝 Observação:</strong> Resultado entregue ao paciente
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                            <button class="btn-small btn-primary" onclick="viewResult(3)">📊 Ver Resultado</button>
+                            <button class="btn-small btn-success" onclick="viewPatient(3)">👤 Ver Paciente</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Request Exam Modal -->
+    <div id="requestExamModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">🔬 Solicitar Exame</h2>
             
-            <form id="loginForm">
+            <form id="requestExamForm">
                 <div class="form-group">
-                    <label for="username">Usuário</label>
-                    <input type="text" id="username" placeholder="Digite seu usuário" required>
+                    <label for="examPatient">Paciente *</label>
+                    <select id="examPatient" required>
+                        <option value="">Selecione um paciente...</option>
+                        <option value="1">Maria Santos Silva</option>
+                        <option value="2">João Oliveira</option>
+                        <option value="3">Ana Costa</option>
+                        <option value="4">Carlos Ferreira</option>
+                        <option value="5">Lucia Mendes</option>
+                    </select>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="examType">Tipo de Exame *</label>
+                        <select id="examType" required>
+                            <option value="">Selecione...</option>
+                            <option value="laboratorio">Laboratório</option>
+                            <option value="imagem">Imagem</option>
+                            <option value="cardiologico">Cardiológico</option>
+                            <option value="neurologico">Neurológico</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="examName">Nome do Exame *</label>
+                        <select id="examName" required>
+                            <option value="">Selecione o tipo primeiro...</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="password">Senha</label>
-                    <input type="password" id="password" placeholder="Digite sua senha" required>
+                    <label for="examIndication">Indicação Clínica *</label>
+                    <textarea id="examIndication" rows="3" required placeholder="Descreva a indicação médica para este exame..."></textarea>
                 </div>
                 
-                <button type="submit" class="btn">Entrar</button>
-                <button type="button" class="btn btn-secondary" onclick="window.location.href='Front-end/register.html'">Cadastrar Usuário</button>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="examUrgency">Urgência</label>
+                        <select id="examUrgency">
+                            <option value="rotina">Rotina</option>
+                            <option value="urgente">Urgente</option>
+                            <option value="emergencia">Emergência</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="examDate">Data Desejada</label>
+                        <input type="date" id="examDate">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="examPreparation">Preparação Necessária</label>
+                    <textarea id="examPreparation" rows="2" placeholder="Instruções de preparo (jejum, medicamentos, etc.)..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="examObservations">Observações</label>
+                    <textarea id="examObservations" rows="2" placeholder="Observações adicionais..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 15px; margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeRequestExamModal()">Cancelar</button>
+                    <button type="submit" class="btn">Solicitar Exame</button>
+                </div>
             </form>
-            
-            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e1e5e9;">
-                <button type="button" class="btn" onclick="window.location.href='Front-end/dashboard.html'" style="background: #27ae60;">
-                    🚀 Acesso Direto ao Dashboard (Demo)
-                </button>
-            </div>
         </div>
     </div>
 
-    <script src="/back-end/index.js"></script>
+    <!-- Result Modal -->
+    <div id="resultModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 500px;">
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">📊 Registrar Resultado</h2>
+            
+            <form id="resultForm">
+                <div class="form-group">
+                    <label for="resultExam">Exame *</label>
+                    <select id="resultExam" required>
+                        <option value="">Selecione um exame...</option>
+                        <option value="1">Hemograma - Maria Santos</option>
+                        <option value="2">Raio-X - João Oliveira</option>
+                        <option value="4">Ecocardiograma - Carlos Ferreira</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="resultFile">Arquivo do Resultado</label>
+                    <input type="file" id="resultFile" accept=".pdf,.jpg,.png,.doc,.docx">
+                </div>
+                
+                <div class="form-group">
+                    <label for="resultDescription">Descrição do Resultado *</label>
+                    <textarea id="resultDescription" rows="4" required placeholder="Descreva os principais achados..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="resultStatus">Status *</label>
+                    <select id="resultStatus" required>
+                        <option value="normal">Normal</option>
+                        <option value="alterado">Alterado</option>
+                        <option value="inconclusivo">Inconclusivo</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; gap: 15px; margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeResultModal()">Cancelar</button>
+                    <button type="submit" class="btn">Registrar Resultado</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../back-end/database.js"></script>
+    <script src="../back-end/exams.js"></script>
 </body>
 </html>

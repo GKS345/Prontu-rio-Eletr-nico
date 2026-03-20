@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSystem - Prontuário Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .screen {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* LOGIN SCREEN */
+        .login-screen {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input[type="text"], input[type="password"], input[type="email"], input[type="tel"], input[type="date"], select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        /* DASHBOARD */
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px 0;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #34495e;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 12px 20px;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: #34495e;
+            color: white;
+            border-left-color: #3498db;
+        }
+
+        .main-content {
+            flex: 1;
+            background: #f8f9fa;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* PATIENT FORMS */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .patient-card {
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .patient-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .patient-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .patient-info {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .patient-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        /* MEDICAL HISTORY */
+        .history-timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .history-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #3498db;
+        }
+
+        .history-item {
+            position: relative;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .history-item::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: #3498db;
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+
+        .history-date {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .history-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        /* TABLES */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-active { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+
+        /* SHAKE ANIMATION */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* LOGIN HINTS */
+        .login-hints {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #1976d2;
+        }
+
+        .login-hints h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+
+        .login-hints ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .login-hints li {
+            margin-bottom: 5px;
+        }
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+                padding: 20px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="screen">
+        <div class="login-screen">
+            <div class="logo">🏥 MedSystem</div>
+            <p class="subtitle">Sistema de Prontuário Eletrônico</p>
+            
+            <!-- Dicas de Login -->
+            <div class="login-hints">
+                <h4>👤 Contas de Demonstração:</h4>
+                <ul>
+                    <li><strong>admin</strong> / admin123</li>
+                    <li><strong>medico</strong> / med123</li>
+                    <li><strong>doutor</strong> / doutor123</li>
+                    <li><strong>demo</strong> / demo</li>
+                </ul>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" placeholder="Digite: admin, medico, doutor ou demo" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="Digite a senha correspondente" required>
+                </div>
+                
+                <button type="submit" class="btn">Entrar</button>
+                <button type="button" class="btn btn-secondary" onclick="showScreen('registerScreen')">Cadastrar Usuário</button>
+            </form>
+            
+            <!-- Acesso Direto para Demonstração -->
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e1e5e9;">
+                <button type="button" class="btn" onclick="showScreen('dashboardScreen')" style="background: #27ae60;">
+                    🚀 Acesso Direto ao Dashboard (Demo)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- REGISTER SCREEN -->
+    <div id="registerScreen" class="screen">
+        <div class="login-screen">
+            <div class="logo">📋 Cadastro</div>
+            <p class="subtitle">Novo Usuário do Sistema</p>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="fullName">Nome Completo</label>
+                    <input type="text" id="fullName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="crm">CRM</label>
+                    <input type="text" id="crm" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="specialty">Especialidade</label>
+                    <select id="specialty" required>
+                        <option value="">Selecione...</option>
+                        <option value="cardiologia">Cardiologia</option>
+                        <option value="pediatria">Pediatria</option>
+                        <option value="ortopedia">Ortopedia</option>
+                        <option value="neurologia">Neurologia</option>
+                        <option value="ginecologia">Ginecologia</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="newPassword">Senha</label>
+                    <input type="password" id="newPassword" required>
+                </div>
+                
+                <button type="submit" class="btn">Cadastrar</button>
+                <button type="button" class="btn btn-secondary" onclick="showScreen('loginScreen')">Voltar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboardScreen" class="screen active">
+        <div class="dashboard">
+            <!-- SIDEBAR -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-logo">🏥 MedSystem</div>
+                </div>
+                
+                <ul class="sidebar-menu">
+                <li><a href="dashboard.html">📊 Visão Geral</a></li>
+                <li><a href="patients.html">👥 Pacientes</a></li>
+                <li><a href="new-patient.html">➕ Novo Paciente</a></li>
+                <li><a href="appointments.html">📅 Consultas</a></li>
+                <li><a href="exams.html">🔬 Exames</a></li>
+                <li><a href="prescriptions.html">💊 Receitas</a></li>
+                <li><a href="reports.html">📋 Relatórios</a></li>
+                <li><a href="index.html">🚪 Sair</a></li>
+                </ul>
+            </div>
+
+            <!-- MAIN CONTENT -->
+            <div class="main-content">
+                <div class="header">
+                    <h1 class="page-title" id="pageTitle">Visão Geral</h1>
+                    <div class="user-info">
+                        <div class="user-avatar">DR</div>
+                        <span>Dr. João Silva</span>
+                    </div>
+                </div>
+
+                <div class="content-area" id="contentArea">
+                    <!-- OVERVIEW CONTENT -->
+                    <div id="overviewContent">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-number">127</div>
+                                <div class="stat-label">Pacientes Ativos</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">23</div>
+                                <div class="stat-label">Consultas Hoje</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">8</div>
+                                <div class="stat-label">Exames Pendentes</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">15</div>
+                                <div class="stat-label">Receitas Emitidas</div>
+                            </div>
+                        </div>
+
+                        <h3>Consultas de Hoje</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Horário</th>
+                                    <th>Paciente</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>09:00</td>
+                                    <td>Maria Santos</td>
+                                    <td>Consulta</td>
+                                    <td><span class="status-badge status-active">Confirmada</span></td>
+                                    <td><button class="btn-small btn-primary">Ver</button></td>
+                                </tr>
+                                <tr>
+                                    <td>10:30</td>
+                                    <td>José Oliveira</td>
+                                    <td>Retorno</td>
+                                    <td><span class="status-badge status-pending">Aguardando</span></td>
+                                    <td><button class="btn-small btn-primary">Ver</button></td>
+                                </tr>
+                                <tr>
+                                    <td>14:00</td>
+                                    <td>Ana Costa</td>
+                                    <td>Consulta</td>
+                                    <td><span class="status-badge status-cancelled">Cancelada</span></td>
+                                    <td><button class="btn-small btn-primary">Ver</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- PATIENTS CONTENT -->
+                    <div id="patientsContent" style="display: none;">
+                        <div style="margin-bottom: 20px;">
+                            <input type="text" placeholder="🔍 Buscar paciente..." style="width: 300px; margin-right: 10px;">
+                            <button class="btn-small btn-primary">Buscar</button>
+                        </div>
+
+                        <div class="patient-card">
+                            <div class="patient-name">Maria Santos Silva</div>
+                            <div class="patient-info">
+                                📞 (11) 99999-9999 • 📧 maria@email.com<br>
+                                🎂 45 anos • 🆔 CPF: 123.456.789-00
+                            </div>
+                            <div class="patient-actions">
+                                <button class="btn-small btn-primary" onclick="showPatientHistory('Maria Santos Silva')">Ver Histórico</button>
+                                <button class="btn-small btn-success">Nova Consulta</button>
+                                <button class="btn-small btn-warning">Editar</button>
+                            </div>
+                        </div>
+
+                        <div class="patient-card">
+                            <div class="patient-name">José Oliveira Costa</div>
+                            <div class="patient-info">
+                                📞 (11) 88888-8888 • 📧 jose@email.com<br>
+                                🎂 62 anos • 🆔 CPF: 987.654.321-00
+                            </div>
+                            <div class="patient-actions">
+                                <button class="btn-small btn-primary" onclick="showPatientHistory('José Oliveira Costa')">Ver Histórico</button>
+                                <button class="btn-small btn-success">Nova Consulta</button>
+                                <button class="btn-small btn-warning">Editar</button>
+                            </div>
+                        </div>
+
+                        <div class="patient-card">
+                            <div class="patient-name">Ana Costa Pereira</div>
+                            <div class="patient-info">
+                                📞 (11) 77777-7777 • 📧 ana@email.com<br>
+                                🎂 28 anos • 🆔 CPF: 456.789.123-00
+                            </div>
+                            <div class="patient-actions">
+                                <button class="btn-small btn-primary" onclick="showPatientHistory('Ana Costa Pereira')">Ver Histórico</button>
+                                <button class="btn-small btn-success">Nova Consulta</button>
+                                <button class="btn-small btn-warning">Editar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NEW PATIENT CONTENT -->
+                    <div id="newPatientContent" style="display: none;">
+                        <form id="patientForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="patientName">Nome Completo</label>
+                                    <input type="text" id="patientName" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="patientCPF">CPF</label>
+                                    <input type="text" id="patientCPF" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="patientBirth">Data de Nascimento</label>
+                                    <input type="date" id="patientBirth" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="patientGender">Sexo</label>
+                                    <select id="patientGender" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Feminino</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="patientPhone">Telefone</label>
+                                    <input type="tel" id="patientPhone" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="patientEmail">E-mail</label>
+                                    <input type="email" id="patientEmail">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="patientAddress">Endereço Completo</label>
+                                <textarea id="patientAddress" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="patientHistory">Histórico Médico Inicial</label>
+                                <textarea id="patientHistory" rows="4" placeholder="Descreva condições pré-existentes, alergias, medicamentos em uso..."></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn">Cadastrar Paciente</button>
+                        </form>
+                    </div>
+
+                    <!-- PATIENT HISTORY CONTENT -->
+                    <div id="patientHistoryContent" style="display: none;">
+                        <div style="margin-bottom: 30px;">
+                            <button class="btn-small btn-secondary" onclick="showDashboardContent('patients')">← Voltar para Pacientes</button>
+                        </div>
+
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+                            <h2 id="historyPatientName">Maria Santos Silva</h2>
+                            <p><strong>Data de Nascimento:</strong> 15/03/1979 (45 anos)</p>
+                            <p><strong>CPF:</strong> 123.456.789-00</p>
+                            <p><strong>Telefone:</strong> (11) 99999-9999</p>
+                            <p><strong>E-mail:</strong> maria@email.com</p>
+                        </div>
+
+                        <div style="margin-bottom: 30px;">
+                            <button class="btn-small btn-success">Nova Consulta</button>
+                            <button class="btn-small btn-primary">Solicitar Exame</button>
+                            <button class="btn-small btn-warning">Emitir Receita</button>
+                        </div>
+
+                        <h3>Histórico Médico</h3>
+                        <div class="history-timeline">
+                            <div class="history-item">
+                                <div class="history-date">20/06/2025</div>
+                                <div class="history-title">Consulta de Rotina</div>
+                                <p><strong>Sintomas:</strong> Dor de cabeça frequente, cansaço</p>
+                                <p><strong>Diagnóstico:</strong> Hipertensão arterial leve</p>
+                                <p><strong>Prescrição:</strong> Losartana 50mg - 1x ao dia</p>
+                                <p><strong>Orientações:</strong> Dieta com baixo teor de sódio, exercícios leves</p>
+                            </div>
+
+                            <div class="history-item">
+                                <div class="history-date">15/05/2025</div>
+                                <div class="history-title">Exame de Sangue</div>
+                                <p><strong>Resultado:</strong> Colesterol total: 240 mg/dL (elevado)</p>
+                                <p><strong>Observações:</strong> Solicitado retorno em 30 dias</p>
+                            </div>
+
+                            <div class="history-item">
+                                <div class="history-date">10/04/2025</div>
+                                <div class="history-title">Consulta Inicial</div>
+                                <p><strong>Queixa Principal:</strong> Check-up preventivo</p>
+                                <p><strong>Exame Físico:</strong> PA: 140/90 mmHg, FC: 78 bpm</p>
+                                <p><strong>Solicitações:</strong> Hemograma completo, lipidograma</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../back-end/database.js"></script>
+    <script src="../back-end/prontuario_online.js"></script>
+</body>
+</html>

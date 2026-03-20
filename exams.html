@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Médico - Receitas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">MedSystem</div>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html">📊 Visão Geral</a></li>
+                <li><a href="patients.html">👥 Pacientes</a></li>
+                <li><a href="new-patient.html">➕ Novo Paciente</a></li>
+                <li><a href="appointments.html">📅 Consultas</a></li>
+                <li><a href="exams.html">🔬 Exames</a></li>
+                <li><a href="prescriptions.html" class="active">💊 Receitas</a></li>
+                <li><a href="reports.html">📋 Relatórios</a></li>
+                <li><a href="./index.html">🚪 Sair</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div class="header">
+                <h1 class="page-title">Receitas Médicas</h1>
+                <div class="user-info">
+                    <span>Dr. João Silva</span>
+                    <div class="user-avatar">JS</div>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <!-- Estatísticas das Receitas -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">156</div>
+                        <div class="stat-label">Receitas Emitidas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">23</div>
+                        <div class="stat-label">Este Mês</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">Hoje</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Pendentes</div>
+                    </div>
+                </div>
+
+                <!-- Ações Rápidas -->
+                <div style="margin-bottom: 30px;">
+                    <button class="btn" onclick="showNewPrescriptionForm()">+ Nova Receita</button>
+                    <button class="btn btn-secondary" onclick="printAllPrescriptions()">🖨️ Imprimir Receitas</button>
+                </div>
+
+                <!-- Formulário Nova Receita (inicialmente oculto) -->
+                <div id="newPrescriptionForm" style="display: none; margin-bottom: 30px;">
+                    <div class="prescription-card">
+                        <div class="prescription-header">
+                            <h2 class="prescription-title">Nova Receita Médica</h2>
+                        </div>
+                        
+                        <form>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="patientSelect">Paciente:</label>
+                                    <select id="patientSelect" required>
+                                        <option value="">Selecione um paciente</option>
+                                        <option value="1">Maria Silva - CPF: 123.456.789-00</option>
+                                        <option value="2">João Santos - CPF: 987.654.321-00</option>
+                                        <option value="3">Ana Costa - CPF: 456.789.123-00</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="prescriptionDate">Data da Receita:</label>
+                                    <input type="date" id="prescriptionDate" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="diagnosis">Diagnóstico:</label>
+                                <textarea id="diagnosis" rows="3" placeholder="Descreva o diagnóstico..."></textarea>
+                            </div>
+
+                            <h3 style="margin: 20px 0 10px 0; color: #2c3e50;">Medicamentos</h3>
+                            
+                            <div id="medicationsList">
+                                <div class="medication-item">
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label>Nome do Medicamento:</label>
+                                            <input type="text" placeholder="Ex: Dipirona 500mg" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Dosagem:</label>
+                                            <input type="text" placeholder="Ex: 1 comprimido" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Frequência:</label>
+                                            <input type="text" placeholder="Ex: A cada 6 horas" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Duração:</label>
+                                            <input type="text" placeholder="Ex: 7 dias" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Instruções Especiais:</label>
+                                        <textarea rows="2" placeholder="Instruções adicionais para o medicamento..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-secondary" onclick="addMedication()">+ Adicionar Medicamento</button>
+
+                            <div class="form-group" style="margin-top: 20px;">
+                                <label for="observations">Observações Gerais:</label>
+                                <textarea id="observations" rows="3" placeholder="Observações gerais da receita..."></textarea>
+                            </div>
+
+                            <div style="margin-top: 30px; display: flex; gap: 10px;">
+                                <button type="submit" class="btn">💾 Salvar Receita</button>
+                                <button type="button" class="btn btn-secondary" onclick="hideNewPrescriptionForm()">❌ Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Lista de Receitas -->
+                <h2 style="margin-bottom: 20px; color: #2c3e50;">Receitas Recentes</h2>
+                
+                <!-- Receita 1 -->
+                <div class="prescription-card">
+                    <div class="prescription-header">
+                        <h3 class="prescription-title">Receita #001</h3>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.9rem; color: #666;">Data: 28/06/2025</div>
+                            <div class="status-badge status-active" style="margin-top: 5px;">Ativa</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <strong>Paciente:</strong> Maria Silva<br>
+                        <strong>CPF:</strong> 123.456.789-00<br>
+                        <strong>Diagnóstico:</strong> Infecção respiratória alta
+                    </div>
+
+                    <div class="medication-item">
+                        <div class="medication-name">Amoxicilina 500mg</div>
+                        <div class="medication-dosage">1 cápsula a cada 8 horas por 7 dias</div>
+                        <div style="margin-top: 5px; font-size: 0.9rem; color: #666;">
+                            Tomar com alimento para reduzir irritação gástrica
+                        </div>
+                    </div>
+
+                    <div class="medication-item">
+                        <div class="medication-name">Dipirona 500mg</div>
+                        <div class="medication-dosage">1 comprimido a cada 6 horas se dor ou febre</div>
+                        <div style="margin-top: 5px; font-size: 0.9rem; color: #666;">
+                            Não exceder 4 comprimidos por dia
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                        <strong>Observações:</strong> Retornar em 7 dias para reavaliação. Suspender medicação em caso de reações alérgicas.
+                    </div>
+
+                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-small btn-primary" onclick="printPrescription('001')">🖨️ Imprimir</button>
+                        <button class="btn-small btn-success" onclick="emailPrescription('001')">📧 Enviar</button>
+                        <button class="btn-small btn-warning" onclick="editPrescription('001')">✏️ Editar</button>
+                        <button class="btn-small btn-danger" onclick="cancelPrescription('001')">❌ Cancelar</button>
+                    </div>
+                </div>
+
+                <!-- Receita 2 -->
+                <div class="prescription-card">
+                    <div class="prescription-header">
+                        <h3 class="prescription-title">Receita #002</h3>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.9rem; color: #666;">Data: 26/06/2025</div>
+                            <div class="status-badge status-completed" style="margin-top: 5px;">Finalizada</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <strong>Paciente:</strong> João Santos<br>
+                        <strong>CPF:</strong> 987.654.321-00<br>
+                        <strong>Diagnóstico:</strong> Hipertensão arterial
+                    </div>
+
+                    <div class="medication-item">
+                        <div class="medication-name">Losartana 50mg</div>
+                        <div class="medication-dosage">1 comprimido pela manhã</div>
+                        <div style="margin-top: 5px; font-size: 0.9rem; color: #666;">
+                            Uso contínuo - não interromper sem orientação médica
+                        </div>
+                    </div>
+
+                    <div class="medication-item">
+                        <div class="medication-name">Hidroclorotiazida 25mg</div>
+                        <div class="medication-dosage">1 comprimido pela manhã</div>
+                        <div style="margin-top: 5px; font-size: 0.9rem; color: #666;">
+                            Tomar junto com a Losartana
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                        <strong>Observações:</strong> Monitorar pressão arterial diariamente. Manter dieta hipossódica e prática regular de exercícios.
+                    </div>
+
+                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-small btn-primary" onclick="printPrescription('002')">🖨️ Imprimir</button>
+                        <button class="btn-small btn-success" onclick="emailPrescription('002')">📧 Enviar</button>
+                        <button class="btn-small btn-warning" onclick="renewPrescription('002')">🔄 Renovar</button>
+                    </div>
+                </div>
+
+                <!-- Receita 3 -->
+                <div class="prescription-card">
+                    <div class="prescription-header">
+                        <h3 class="prescription-title">Receita #003</h3>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.9rem; color: #666;">Data: 25/06/2025</div>
+                            <div class="status-badge status-pending" style="margin-top: 5px;">Pendente</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <strong>Paciente:</strong> Ana Costa<br>
+                        <strong>CPF:</strong> 456.789.123-00<br>
+                        <strong>Diagnóstico:</strong> Gastrite aguda
+                    </div>
+
+                    <div class="medication-item">
+                        <div class="medication-name">Omeprazol 20mg</div>
+                        <div class="medication-dosage">1 cápsula pela manhã em jejum</div>
+                        <div style="margin-top: 5px; font-size: 0.9rem; color: #666;">
+                            Tomar 30 minutos antes do café da manhã
+                        </div>
+                    </div>
+
+                    <div class="medication-item">
+                        <div class="medication-name">Simeticona 40mg</div>
+                        <div class="medication-dosage">1 comprimido após as refeições</div>
+                        <div style="margin-top: 5px; font-size: 0.9rem; color: #666;">
+                            Para alívio de gases e desconforto abdominal
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+                        <strong>Observações:</strong> Evitar alimentos irritantes (café, refrigerantes, frituras). Fazer refeições menores e mais frequentes.
+                    </div>
+
+                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-small btn-primary" onclick="printPrescription('003')">🖨️ Imprimir</button>
+                        <button class="btn-small btn-success" onclick="emailPrescription('003')">📧 Enviar</button>
+                        <button class="btn-small btn-warning" onclick="editPrescription('003')">✏️ Editar</button>
+                        <button class="btn-small btn-danger" onclick="cancelPrescription('003')">❌ Cancelar</button>
+                    </div>
+                </div>
+
+                <!-- Tabela de Histórico -->
+                <h2 style="margin: 40px 0 20px 0; color: #2c3e50;">Histórico de Receitas</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Receita</th>
+                            <th>Paciente</th>
+                            <th>Data</th>
+                            <th>Medicamentos</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#001</td>
+                            <td>Maria Silva</td>
+                            <td>28/06/2025</td>
+                            <td>Amoxicilina, Dipirona</td>
+                            <td><span class="status-badge status-active">Ativa</span></td>
+                            <td>
+                                <button class="btn-small btn-primary">Ver</button>
+                                <button class="btn-small btn-warning">Editar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#002</td>
+                            <td>João Santos</td>
+                            <td>26/06/2025</td>
+                            <td>Losartana, Hidroclorotiazida</td>
+                            <td><span class="status-badge status-completed">Finalizada</span></td>
+                            <td>
+                                <button class="btn-small btn-primary">Ver</button>
+                                <button class="btn-small btn-success">Renovar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>#003</td>
+                            <td>Ana Costa</td>
+                            <td>25/06/2025</td>
+                            <td>Omeprazol, Simeticona</td>
+                            <td><span class="status-badge status-pending">Pendente</span></td>
+                            <td>
+                                <button class="btn-small btn-primary">Ver</button>
+                                <button class="btn-small btn-warning">Editar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="../back-end/database.js"></script>
+    <script src="../back-end/prescriptions.js"></script>
+</body>
+</html>
